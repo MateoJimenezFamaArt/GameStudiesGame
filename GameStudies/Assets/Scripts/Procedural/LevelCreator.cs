@@ -105,17 +105,22 @@ public class LevelCreator : MonoBehaviour
             1,
             3
         };
+
         Mesh mesh = new Mesh();
         mesh.vertices = vertices;
         mesh.uv = uvs;
         mesh.triangles = triangles;
 
-        GameObject levelFloor = new GameObject("Mesh"+bottomLeftCorner, typeof(MeshFilter), typeof(MeshRenderer));
+        GameObject levelFloor = new GameObject("Mesh" + bottomLeftCorner, typeof(MeshFilter), typeof(MeshRenderer), typeof(MeshCollider));
 
         levelFloor.transform.position = Vector3.zero;
         levelFloor.transform.localScale = Vector3.one;
+
+
         levelFloor.GetComponent<MeshFilter>().mesh = mesh;
+        levelFloor.GetComponent<MeshCollider>().sharedMesh = mesh;
         levelFloor.GetComponent<MeshRenderer>().material = Floor_Material;
+        
         levelFloor.transform.parent = transform;
 
 
