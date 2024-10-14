@@ -2,25 +2,20 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
-using System.Buffers.Text;
-
 [CustomEditor(typeof(LevelCreator))]
 public class LevelCreatorEditor : Editor
 {
-
     public override void OnInspectorGUI()
     {
         base.OnInspectorGUI();
-        LevelCreator levelCreator = (LevelCreator)target;
-        if (GUILayout.Button("Create New Level"))
+        LevelCreator dungeonCreator = (LevelCreator)target;
+        if (GUILayout.Button("CreateNewDungeon"))
         {
-            levelCreator.CreateLevel();
+            dungeonCreator.CreateLevel();
         }
-        if (GUILayout.Button("Reset"))
+        if (GUILayout.Button("DeleteNewLevel"))
         {
-            levelCreator.DestroyAllChildren();
+            dungeonCreator.DestroyAllChildren();
         }
     }
-
-
 }
