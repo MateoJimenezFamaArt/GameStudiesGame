@@ -18,7 +18,7 @@ public class LevelCreator : MonoBehaviour
     public float roomTopCornerModifier; 
     [Range(0.0f, 2f)]
     public int roomOffset;
-    public GameObject wall_Vertical, wall_Horizontal;
+    public GameObject wallVertical, wallHorizontal;
     List <Vector3Int> possibleDoorVerticalPosition;
     List <Vector3Int> possibleDoorHorizontalPosition;
     List <Vector3Int> possibleWallHorizontalPosition;
@@ -34,8 +34,9 @@ public class LevelCreator : MonoBehaviour
         
     }
 
-    private void CreateLevel()
+    public void CreateLevel()
     {
+        DestroyAllChildren();
         LevelGenerator generator = new LevelGenerator(levelWidth, levelLenght);
         var listOfRooms = generator.CalculateLevel(Maxiterations,
         roomWidthmin,
@@ -44,15 +45,12 @@ public class LevelCreator : MonoBehaviour
         roomTopCornerModifier,
         roomOffset,
         CorridorWidth);
-
         GameObject wallParent = new GameObject("WallParent");
         wallParent.transform.parent = transform;
         possibleDoorVerticalPosition = new List<Vector3Int>();
         possibleDoorHorizontalPosition = new List<Vector3Int>();
         possibleWallHorizontalPosition = new List<Vector3Int>();
         possibleWallVerticalPosition = new List<Vector3Int>();
-
-
         for (int i = 0; i < listOfRooms.Count; i++)
         {
             CreateMesh(listOfRooms[i].BottomLeftAreaCorner,listOfRooms[i].TopRightAreaCorner);
@@ -62,19 +60,19 @@ public class LevelCreator : MonoBehaviour
 
     private void CreateWalls(GameObject wallParent)
     {
-        foreach(var wallPosition in possibleWallHorizontalPosition)
+        foreach (var wallPosition in possibleWallHorizontalPosition)
         {
-            CreateWall(wallParent,wallPosition,wall_Horizontal);
+            CreateWall(wallParent, wallPosition, wallHorizontal);
         }
-        foreach (var wallPosition in possibleDoorVerticalPosition)
+        foreach (var wallPosition in possibleWallVerticalPosition)
         {
-            CreateWall(wallParent,wallPosition,wall_Vertical);
+            CreateWall(wallParent, wallPosition, wallVertical);
         }
     }
 
     private void CreateWall(GameObject wallParent, Vector3Int wallPosition, GameObject wallPrefab)
     {
-        Instantiate(wallPrefab,wallPosition,Quaternion.identity,wallParent.transform);
+        Instantiate(wallPrefab, wallPosition, Quaternion.identity, wallParent.transform);
     }
 
     private void CreateMesh(Vector2 bottomLeftCorner, Vector2 topRightCorner)
@@ -118,26 +116,27 @@ public class LevelCreator : MonoBehaviour
         levelFloor.transform.localScale = Vector3.one;
         levelFloor.GetComponent<MeshFilter>().mesh = mesh;
         levelFloor.GetComponent<MeshRenderer>().material = Floor_Material;
+        levelFloor.transform.parent = transform;
 
 
         for (int row = (int)bottomLeftV.x; row < (int)bottomRightV.x; row++)
         {
-            var wallPosition = new Vector3(row,0,bottomLeftV.z);
+            var wallPosition = new Vector3(row, 0, bottomLeftV.z);
             AddWallPositionToList(wallPosition, possibleWallHorizontalPosition, possibleDoorHorizontalPosition);
         }
-        for (int row = (int)topLeftV.x; row < (int)topRightCorner.x ; row++)
+        for (int row = (int)topLeftV.x; row < (int)topRightCorner.x; row++)
         {
-            var wallPosition = new Vector3(row,0,topRightV.z);
+            var wallPosition = new Vector3(row, 0, topRightV.z);
             AddWallPositionToList(wallPosition, possibleWallHorizontalPosition, possibleDoorHorizontalPosition);
         }
         for (int col = (int)bottomLeftV.z; col < (int)topLeftV.z; col++)
         {
-            var wallPosition = new Vector3(bottomLeftV.x, 0 , col);
+            var wallPosition = new Vector3(bottomLeftV.x, 0, col);
             AddWallPositionToList(wallPosition, possibleWallVerticalPosition, possibleDoorVerticalPosition);
         }
         for (int col = (int)bottomRightV.z; col < (int)topRightV.z; col++)
         {
-            var wallPosition = new Vector3(bottomRightV.x, 0 , col);
+            var wallPosition = new Vector3(bottomRightV.x, 0, col);
             AddWallPositionToList(wallPosition, possibleWallVerticalPosition, possibleDoorVerticalPosition);
         }
     }
@@ -155,6 +154,17 @@ public class LevelCreator : MonoBehaviour
             wallList.Add(point);
         }
 
+    }
+
+    public void DestroyAllChildren()
+    {
+        while(transform.childCount != 0)
+        {
+            foreach(Transform item in transform)
+            {
+                DestroyImmediate(item.gameObject);
+            }
+        }
     }
 }
 
