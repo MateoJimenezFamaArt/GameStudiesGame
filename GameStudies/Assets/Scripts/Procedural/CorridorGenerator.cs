@@ -5,23 +5,31 @@ using UnityEngine;
 
 public class CorridorsGenerator
 {
-    public List<Node> CreateCorridor(List<RoomNode> allNodesCollection, int corridorWidth)
+    public List<CorridorNode> CreateCorridor(List<RoomNode> allNodesCollection, int corridorWidth)
     {
-        List<Node> corridorList = new List<Node>();
+        List<CorridorNode> corridorList = new List<CorridorNode>();
         Queue<RoomNode> structuresToCheck = new Queue<RoomNode>(
             allNodesCollection.OrderByDescending(node => node.TreeLayerIndex).ToList());
-            while (structuresToCheck.Count > 0)
+
+        while (structuresToCheck.Count > 0)
+        {
+            var node = structuresToCheck.Dequeue();
+            if (node.ChildrenNodeList.Count < 2) // Ensure at least two children for corridor generation
             {
-                var node = structuresToCheck.Dequeue();
-                if (node.ChildrenNodeList.Count == 0)
-                {
-                    continue;
-                }
-                CorridorNode corridor = new CorridorNode(node.ChildrenNodeList[0], node.ChildrenNodeList[1], corridorWidth);
-                corridorList.Add(corridor);
+                continue;
             }
 
-            return corridorList;
-    } 
-}
+            // Create corridors between each pair of children
+            for (int i = 0; i < node.ChildrenNodeList.Count - 1; i++)
+            {
+                for (int j = i + 1; j < node.ChildrenNodeList.Count; j++)
+                {
+                    CorridorNode corridor = new CorridorNode(node.ChildrenNodeList[i], node.ChildrenNodeList[j], corridorWidth);
+                    corridorList.Add(corridor);
+                }
+            }
+        }
 
+        return corridorList;
+    }
+}
