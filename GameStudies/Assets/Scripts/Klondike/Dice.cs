@@ -1,19 +1,25 @@
 using UnityEngine;
 
-public class Die
+public class Dice
 {
-    public string dieName;  // Each die has a unique name
-    public int value;       // Value rolled
+    public string DiceName { get; private set; }
+    public int CurrentValue { get; private set; }
 
-    public Die(string name)
+    public Dice(string diceName)
     {
-        dieName = name;
+        DiceName = diceName;
         Roll();
     }
 
-    // Roll the die to get a random value between 1 and 6
+    // Roll the dice (generating a value from 1 to 6)
     public void Roll()
     {
-        value = Random.Range(1, 7); // Random number between 1 and 6
+        CurrentValue = Random.Range(1, 7);
+    }
+
+    // For debugging in the Console
+    public override string ToString()
+    {
+        return $"{DiceName}: {CurrentValue}";
     }
 }

@@ -1,149 +1,170 @@
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
+using System.Linq;
 
 public class DiceManager : MonoBehaviour
 {
-    private const int DiceCount = 5; // Number of dice to roll
-    private const int MaxReRolls = 2; // Maximum re-rolls allowed
-
-    public List<int> playerDiceRoll = new List<int>();
-    public List<int> secondDiceRoll = new List<int>();
-    public List<int> aiDiceRoll = new List<int>();
-    
-    private int rerollCount = 0; // Track the number of re-rolls used
+    private List<Dice> playerDice;
+    private List<Dice> bankDice;
+    private string[] diceNames = { "Terrain Dice", "Enemy Dice", "Chest Dice", "Trap Dice", "Bonus Dice" };
+    private bool isRerolling = false;
+    private bool isGameOver = false;
+    private int rerollCount = 0;
+    private const int maxRerolls = 2; // Maximum rerolls allowed
 
     private void Start()
     {
-        RollAIDice(); // Roll AI's dice at the start
-        RollDice(ref playerDiceRoll); // Initial player dice roll
+        InitializeGame();
+        RollBankDice();
+        RollPlayerDice();
     }
 
-    // Roll the AI's dice once and keep it static
-    public void RollAIDice()
+    private void Update()
     {
-        aiDiceRoll.Clear();
-        for (int i = 0; i < DiceCount; i++)
+        if (!isGameOver)
         {
-            aiDiceRoll.Add(Random.Range(1, 7)); // Simulating a dice roll (1-6)
+            HandleRerollInput();
         }
     }
 
-    // Roll the player's dice, either initially or as a re-roll
-    public void RollDice(ref List<int> diceRoll)
+    // Initialize both player and bank's dice
+    private void InitializeGame()
     {
-        diceRoll.Clear();
-        for (int i = 0; i < DiceCount; i++)
+        playerDice = new List<Dice>();
+        bankDice = new List<Dice>();
+
+        // Create 5 dice for both player and bank
+        for (int i = 0; i < 5; i++)
         {
-            diceRoll.Add(Random.Range(1, 7)); // Simulating a dice roll (1-6)
+            playerDice.Add(new Dice(diceNames[i]));
+            bankDice.Add(new Dice(diceNames[i]));
         }
     }
 
-    public void ReRollPlayerDice()
+    private void RollBankDice()
     {
-        if (rerollCount < MaxReRolls)
+        Debug.Log("Bank rolls its dice...");
+        foreach (var dice in bankDice)
         {
+            dice.Roll();
+        }
+        DisplayDiceResults(bankDice);
+    }
+
+    private void RollPlayerDice()
+    {
+        Debug.Log("Player rolls its dice...");
+        foreach (var dice in playerDice)
+        {
+            dice.Roll();
+        }
+        DisplayDiceResults(playerDice);
+    }
+
+    // Display the result of the dice rolls in the console
+    private void DisplayDiceResults(List<Dice> diceSet)
+    {
+        foreach (var dice in diceSet)
+        {
+            Debug.Log(dice.ToString());
+        }
+    }
+
+    // Handle player input for reroll
+    private void HandleRerollInput()
+    {
+        if (!isRerolling && rerollCount < maxRerolls)
+        {
+            Debug.Log("Do you want to reroll? Press 'Y' to reroll or 'N' to stop.");
+            isRerolling = true; // Lock this phase until player input is processed
+        }
+
+        if (Input.GetKeyDown(KeyCode.Y) && rerollCount < maxRerolls)
+        {
+            RerollPlayerDice();
+            isRerolling = false;
             rerollCount++;
-            RollDice(ref playerDiceRoll);
+
+            if (rerollCount >= maxRerolls)
+            {
+                Debug.Log("Maximum rerolls reached. No more rerolls allowed.");
+                isGameOver = true;
+                DetermineWinner();
+            }
+        }
+        else if (Input.GetKeyDown(KeyCode.N))
+        {
+            isRerolling = false;
+            isGameOver = true;
+            DetermineWinner();
+        }
+    }
+
+    // Reroll all of the player's dice
+    private void RerollPlayerDice()
+    {
+        Debug.Log("Player rerolls its dice...");
+        foreach (var dice in playerDice)
+        {
+            dice.Roll();
+        }
+        DisplayDiceResults(playerDice);
+    }
+
+    // Determine the winner based on dice combinations
+    private void DetermineWinner()
+    {
+        string playerCombo = GetBestCombination(playerDice);
+        string bankCombo = GetBestCombination(bankDice);
+
+        Debug.Log($"Player Combo: {playerCombo}");
+        Debug.Log($"Bank Combo: {bankCombo}");
+
+        int comparison = CompareCombos(playerCombo, bankCombo);
+
+        if (comparison > 0)
+        {
+            Debug.Log("Player wins!");
+        }
+        else if (comparison < 0)
+        {
+            Debug.Log("Bank wins!");
         }
         else
         {
-            Debug.Log("No more re-rolls left.");
+            Debug.Log("It's a tie!");
         }
     }
 
-    public void RollSecondSetOfDice()
+    // Calculate best combination from dice
+    private string GetBestCombination(List<Dice> diceSet)
     {
-        RollDice(ref secondDiceRoll); // Roll a second set of dice
+        var groups = diceSet.GroupBy(d => d.CurrentValue)
+                            .Select(g => new { Value = g.Key, Count = g.Count() })
+                            .OrderByDescending(g => g.Count)
+                            .ThenByDescending(g => g.Value) // Sort by count and then by value
+                            .ToList();
+
+        if (groups[0].Count == 5) return "Five of a Kind";
+        if (groups[0].Count == 4) return "Four of a Kind";
+        if (groups[0].Count == 3 && groups[1].Count == 2) return "Full House";  // Three of a Kind + Pair
+        if (groups[0].Count == 3) return "Three of a Kind";
+        if (groups[0].Count == 2 && groups[1].Count == 2) return "Two Pairs";
+        if (groups[0].Count == 2) return "Pair";
+        return "High Card";
     }
 
-    public string CheckPokerCombinations()
+    // Compare two combinations to determine which is better
+    private int CompareCombos(string playerCombo, string bankCombo)
     {
-        List<int> allDice = new List<int>();
-        allDice.AddRange(playerDiceRoll);
-        allDice.AddRange(secondDiceRoll);
-        return EvaluateCombinations(allDice);
-    }
-
-    private string EvaluateCombinations(List<int> diceRolls)
-    {
-        // Check for combinations and return result as a string
-        if (HasFiveOfAKind(diceRolls))
+        List<string> comboRank = new List<string>
         {
-            return "Five of a kind!";
-        }
-        else if (HasFullHouse(diceRolls))
-        {
-            return "Full house!";
-        }
-        else if (HasTwoPairs(diceRolls))
-        {
-            return "Two pairs!";
-        }
-        else if (HasOnePair(diceRolls))
-        {
-            return "One pair!";
-        }
+            "High Card", "Pair", "Two Pairs", "Three of a Kind", "Full House", "Four of a Kind", "Five of a Kind"
+        };
 
-        return "No special combination.";
-    }
+        int playerRank = comboRank.IndexOf(playerCombo);
+        int bankRank = comboRank.IndexOf(bankCombo);
 
-    private bool HasFiveOfAKind(List<int> dice)
-    {
-        return CheckForCount(dice, 5);
-    }
-
-    private bool HasFullHouse(List<int> dice)
-    {
-        int[] counts = CountDice(dice);
-        return HasThreeOfAKind(counts) && HasPair(counts);
-    }
-
-    private bool HasTwoPairs(List<int> dice)
-    {
-        int[] counts = CountDice(dice);
-        int pairCount = 0;
-        foreach (var count in counts)
-        {
-            if (count == 2) pairCount++;
-        }
-        return pairCount == 2;
-    }
-
-    private bool HasOnePair(List<int> dice)
-    {
-        int[] counts = CountDice(dice);
-        foreach (var count in counts)
-        {
-            if (count == 2) return true;
-        }
-        return false;
-    }
-
-    private int[] CountDice(List<int> dice)
-    {
-        int[] counts = new int[7]; // Counts for dice faces 1 to 6
-        foreach (var die in dice)
-        {
-            counts[die]++;
-        }
-        return counts;
-    }
-
-    private bool HasThreeOfAKind(int[] counts)
-    {
-        foreach (var count in counts)
-        {
-            if (count == 3) return true;
-        }
-        return false;
-    }
-
-    private bool HasPair(int[] counts)
-    {
-        foreach (var count in counts)
-        {
-            if (count == 2) return true;
-        }
-        return false;
+        return playerRank.CompareTo(bankRank);
     }
 }
