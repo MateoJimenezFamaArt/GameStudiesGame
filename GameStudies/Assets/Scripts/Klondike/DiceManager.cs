@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine.SceneManagement;
 
 public class DiceManager : MonoBehaviour
 {
@@ -46,7 +47,7 @@ public class DiceManager : MonoBehaviour
             bankDice.Add(new Dice(diceNames[i]));
         }
 
-        diceData.ClearWinnersDice();
+        //diceData.ClearWinnersDice();
 
     }
 
@@ -171,6 +172,10 @@ private void SaveWinnersDiceCombination(List<Dice> winnersDice)
     {
         Debug.Log($"Dice Name: {dice.diceName}, Dice Value: {dice.diceValue}");
     }
+    Debug.Log("Changing Scene to world Building...");
+    LoadNextScene();
+
+
 }
 
 
@@ -205,4 +210,26 @@ private void SaveWinnersDiceCombination(List<Dice> winnersDice)
 
         return playerRank.CompareTo(bankRank);
     }
+
+    private void LoadNextScene()
+{
+    // Get the current scene index
+    int currentSceneIndex = SceneManager.GetActiveScene().buildIndex;
+    
+    // Calculate the next scene index
+    int nextSceneIndex = currentSceneIndex + 1;
+
+    // Check if the next scene index is within the valid range
+    if (nextSceneIndex >= SceneManager.sceneCountInBuildSettings)
+    {
+        // Optional: Loop back to the first scene
+        nextSceneIndex = 0; // or you can just return to not load any scene
+    }
+
+    // Load the next scene
+    SceneManager.LoadScene(nextSceneIndex);
+}
+
+
+
 }

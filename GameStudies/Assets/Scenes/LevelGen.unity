@@ -38,12 +38,12 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.18028378, g: 0.22571412, b: 0.30692285, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
   m_ObjectHideFlags: 0
-  serializedVersion: 12
+  serializedVersion: 13
+  m_BakeOnSceneLoad: 0
   m_GISettings:
     serializedVersion: 2
     m_BounceScale: 1
@@ -195,8 +195,12 @@ Light:
   m_BoundingSphereOverride: {x: 0, y: 0, z: 0, w: 0}
   m_UseBoundingSphereOverride: 0
   m_UseViewFrustumForShadowCasterCull: 1
+  m_ForceVisible: 0
   m_ShadowRadius: 0
   m_ShadowAngle: 0
+  m_LightUnit: 1
+  m_LuxAtDistance: 1
+  m_EnableSpotReflector: 1
 --- !u!4 &705507995
 Transform:
   m_ObjectHideFlags: 0
@@ -262,7 +266,6 @@ MonoBehaviour:
   roomLengthMin: 25
   maxIterations: 5
   corridorWidth: 5
-  material: {fileID: 2100000, guid: 311fe80c16a635741960d1e6a02eb869, type: 2}
   playerPrefab: {fileID: 363815205597976744, guid: e875b6e8fefb9ab418d13c1974910caf, type: 3}
   wallHeight: 3
   roomBottomCornerModifier: 0.3
@@ -270,6 +273,14 @@ MonoBehaviour:
   roomOffset: 1
   wallVertical: {fileID: 1080018105949607549, guid: 901f72056bd8ea444aec3b8f76f5639e, type: 3}
   wallHorizontal: {fileID: 3586748888610540986, guid: f01df47bb6a5ad442b5865521c99a259, type: 3}
+  diceData: {fileID: 11400000, guid: 1b6b402344f52b64fba65f88cf908e4a, type: 2}
+  terrainMaterials:
+  - {fileID: 2100000, guid: 311fe80c16a635741960d1e6a02eb869, type: 2}
+  - {fileID: 2100000, guid: 5e1fb2c9044fe384c90ae11a14db4fe6, type: 2}
+  - {fileID: 2100000, guid: b8a548ef3cd985c4385714ba6d151a1c, type: 2}
+  - {fileID: 2100000, guid: 1842aed8eed33a54e81cc5f581d40837, type: 2}
+  - {fileID: 2100000, guid: af11affd15b6f224699c9fb6c0e4d64d, type: 2}
+  - {fileID: 2100000, guid: 3ed01c8ed88d52a439b595a54c6d5948, type: 2}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
