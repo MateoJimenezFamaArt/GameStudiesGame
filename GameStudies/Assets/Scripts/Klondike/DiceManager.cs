@@ -4,6 +4,8 @@ using System.Linq;
 
 public class DiceManager : MonoBehaviour
 {
+    public DiceData diceData; // Assign this in the inspector
+
     private List<Dice> playerDice;
     private List<Dice> bankDice;
     private string[] diceNames = { "Terrain Dice", "Enemy Dice", "Chest Dice", "Trap Dice", "Bonus Dice" };
@@ -11,6 +13,9 @@ public class DiceManager : MonoBehaviour
     private bool isGameOver = false;
     private int rerollCount = 0;
     private const int maxRerolls = 2; // Maximum rerolls allowed
+
+    // List to store winner's dice combination (name and value)
+    private List<(string diceName, int diceValue)> winnersDiceCombination;
 
     private void Start()
     {
@@ -32,6 +37,7 @@ public class DiceManager : MonoBehaviour
     {
         playerDice = new List<Dice>();
         bankDice = new List<Dice>();
+        winnersDiceCombination = new List<(string, int)>(); // Initialize the list
 
         // Create 5 dice for both player and bank
         for (int i = 0; i < 5; i++)
@@ -39,6 +45,9 @@ public class DiceManager : MonoBehaviour
             playerDice.Add(new Dice(diceNames[i]));
             bankDice.Add(new Dice(diceNames[i]));
         }
+
+        diceData.ClearWinnersDice();
+
     }
 
     private void RollBankDice()
@@ -125,16 +134,45 @@ public class DiceManager : MonoBehaviour
         if (comparison > 0)
         {
             Debug.Log("Player wins!");
+            SaveWinnersDiceCombination(playerDice); // Save player's dice
         }
         else if (comparison < 0)
         {
             Debug.Log("Bank wins!");
+            SaveWinnersDiceCombination(bankDice); // Save bank's dice
         }
         else
         {
-            Debug.Log("It's a tie!");
+            Debug.Log("It's a tie! No dice combination will be saved.");
         }
+
+        Debug.Log("The 'Klondike' game has finished, now sending the winners Data to the next Scene");
     }
+
+    // Save the winner's dice combination (name and value)
+private void SaveWinnersDiceCombination(List<Dice> winnersDice)
+{
+    if (diceData == null)
+    {
+        Debug.LogError("DiceData is not assigned in DiceManager!");
+        return; // Exit the method if diceData is null
+    }
+
+    diceData.ClearWinnersDice(); // Clear previous data
+
+    foreach (var dice in winnersDice)
+    {
+        diceData.AddWinnersDice(dice.DiceName, dice.CurrentValue);
+    }
+
+    // Log the saved dice combination for debugging
+    Debug.Log("Winner's Dice Combination Saved:");
+    foreach (var dice in diceData.winnersDiceCombination)
+    {
+        Debug.Log($"Dice Name: {dice.diceName}, Dice Value: {dice.diceValue}");
+    }
+}
+
 
     // Calculate best combination from dice
     private string GetBestCombination(List<Dice> diceSet)
