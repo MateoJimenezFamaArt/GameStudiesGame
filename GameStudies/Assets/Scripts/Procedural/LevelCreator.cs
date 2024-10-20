@@ -161,6 +161,7 @@ public class LevelCreator : MonoBehaviour
             {
                 // Map the dice value to the corresponding material
                 int index = Mathf.Clamp(dice.diceValue, 0, terrainMaterials.Length - 1); // Ensure we stay within bounds
+                Debug.Log(terrainMaterials[index]);
                 return terrainMaterials[index];
             }
         }
