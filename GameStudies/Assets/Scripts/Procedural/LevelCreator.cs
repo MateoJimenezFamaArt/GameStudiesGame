@@ -10,6 +10,7 @@ public class LevelCreator : MonoBehaviour
     public int maxIterations;
     public int corridorWidth;
     public GameObject playerPrefab; // Reference to the player prefab
+    public GameObject enemyPrefab;  // Reference to the enemy prefab
     public float wallHeight = 3.0f; // Height of the walls
     [Range(0.0f, 0.3f)]
     public float roomBottomCornerModifier;
@@ -21,7 +22,9 @@ public class LevelCreator : MonoBehaviour
 
     // New Variables
     public DiceData diceData; // Reference to the DiceData ScriptableObject
-    public Material[] terrainMaterials; // Array of materials based on terrain types
+    public Material[] floorMaterials; // Array of materials for floors (7 elements)
+    public Material[] wallMaterials;  // Array of materials for walls (7 elements)
+    public Material[] enemyMaterials; // Array of materials for enemies (7 elements)
 
     List<Vector3Int> possibleDoorVerticalPosition;
     List<Vector3Int> possibleDoorHorizontalPosition;
@@ -34,67 +37,86 @@ public class LevelCreator : MonoBehaviour
     }
 
     public void CreateLevel()
+{
+    DestroyAllChildren();
+    LevelGenerator generator = new LevelGenerator(dungeonWidth, dungeonLength);
+    var listOfRooms = generator.CalculateDungeon(maxIterations,
+        roomWidthMin,
+        roomLengthMin,
+        roomBottomCornerModifier,
+        roomTopCornerMidifier,
+        roomOffset,
+        corridorWidth);
+
+    GameObject wallParent = new GameObject("WallParent");
+    wallParent.transform.parent = transform;
+
+    possibleDoorVerticalPosition = new List<Vector3Int>();
+    possibleDoorHorizontalPosition = new List<Vector3Int>();
+    possibleWallHorizontalPosition = new List<Vector3Int>();
+    possibleWallVerticalPosition = new List<Vector3Int>();
+
+    // Spawn the player in a valid room
+    SpawnPlayerInRoom(listOfRooms);
+
+    // Get the synchronized material index based on Terrain Dice
+    int materialIndex = GetMaterialIndexForTerrainDice();
+
+    // Get the materials for floors, walls, and enemies
+    Material floorMaterial = floorMaterials[materialIndex];
+    Material wallMaterial = wallMaterials[materialIndex];
+    Material enemyMaterial = enemyMaterials[materialIndex]; // You can use this material for your enemies later
+
+    // Create the rooms and walls
+    for (int i = 0; i < listOfRooms.Count; i++)
     {
-        DestroyAllChildren();
-        LevelGenerator generator = new LevelGenerator(dungeonWidth, dungeonLength);
-        var listOfRooms = generator.CalculateDungeon(maxIterations,
-            roomWidthMin,
-            roomLengthMin,
-            roomBottomCornerModifier,
-            roomTopCornerMidifier,
-            roomOffset,
-            corridorWidth);
-
-        GameObject wallParent = new GameObject("WallParent");
-        wallParent.transform.parent = transform;
-
-        possibleDoorVerticalPosition = new List<Vector3Int>();
-        possibleDoorHorizontalPosition = new List<Vector3Int>();
-        possibleWallHorizontalPosition = new List<Vector3Int>();
-        possibleWallVerticalPosition = new List<Vector3Int>();
-
-        // Ensure there's only one player in the scene
-        GameObject existingPlayer = GameObject.FindWithTag("Player");
-        if (existingPlayer == null)
-        {
-            // Instantiate the player in the first room if no player exists
-            Vector3 playerSpawnPosition = new Vector3(
-                (listOfRooms[0].BottomLeftAreaCorner.x + listOfRooms[0].TopRightAreaCorner.x) / 2, 
-                3, 
-                (listOfRooms[0].BottomLeftAreaCorner.y + listOfRooms[0].TopRightAreaCorner.y) / 2
-            );
-            Instantiate(playerPrefab, playerSpawnPosition, Quaternion.identity);
-        }
-
-        // Determine material based on Terrain Dice
-        Material floorMaterial = GetMaterialForTerrainDice();
-
-        // Create the rooms and walls
-        for (int i = 0; i < listOfRooms.Count; i++)
-        {
-            CreateMesh(listOfRooms[i].BottomLeftAreaCorner, listOfRooms[i].TopRightAreaCorner, floorMaterial);
-        }
-
-        CreateWalls(wallParent, floorMaterial);
+        CreateMesh(listOfRooms[i].BottomLeftAreaCorner, listOfRooms[i].TopRightAreaCorner, floorMaterial);
+        SpawnEnemiesInRoom(listOfRooms[i], materialIndex);  // Spawn enemies in each room
     }
 
-    private void CreateWalls(GameObject wallParent, Material floorMaterial)
+    CreateWalls(wallParent, wallMaterial);
+}
+
+private void SpawnPlayerInRoom(List<Node> rooms)
+{
+    // Randomly select a room from the list
+    Node selectedRoom = rooms[UnityEngine.Random.Range(0, rooms.Count)];
+
+    // Calculate a spawn position within the selected room
+    Vector3 playerSpawnPosition = new Vector3(
+        UnityEngine.Random.Range(selectedRoom.BottomLeftAreaCorner.x, selectedRoom.TopRightAreaCorner.x), 
+        1.0f,  // Adjusted spawn position to be above the ground
+        UnityEngine.Random.Range(selectedRoom.BottomLeftAreaCorner.y, selectedRoom.TopRightAreaCorner.y)
+    );
+
+    // Ensure the spawn position is within the room bounds
+    if (IsPositionInRoom(selectedRoom, playerSpawnPosition))
+    {
+        Instantiate(playerPrefab, playerSpawnPosition, Quaternion.identity);
+    }
+    else
+    {
+        Debug.LogError("Spawn position is not within the room bounds!");
+    }
+}
+
+    private void CreateWalls(GameObject wallParent, Material wallMaterial)
     {
         foreach (var wallPosition in possibleWallHorizontalPosition)
         {
-            CreateWall(wallParent, wallPosition, wallHorizontal, floorMaterial);
+            CreateWall(wallParent, wallPosition, wallHorizontal, wallMaterial);
         }
         foreach (var wallPosition in possibleWallVerticalPosition)
         {
-            CreateWall(wallParent, wallPosition, wallVertical, floorMaterial);
+            CreateWall(wallParent, wallPosition, wallVertical, wallMaterial);
         }
     }
 
-    private void CreateWall(GameObject wallParent, Vector3Int wallPosition, GameObject wallPrefab, Material floorMaterial)
+    private void CreateWall(GameObject wallParent, Vector3Int wallPosition, GameObject wallPrefab, Material wallMaterial)
     {
         GameObject wall = Instantiate(wallPrefab, wallPosition + new Vector3(0, wallHeight / 2, 0), Quaternion.identity, wallParent.transform);
         wall.transform.localScale = new Vector3(1, wallHeight, 1); // Scale the wall to the desired height
-        wall.GetComponent<MeshRenderer>().material = floorMaterial; // Set the wall material
+        wall.GetComponent<MeshRenderer>().material = wallMaterial; // Set the wall material
     }
 
     private void CreateMesh(Vector2 bottomLeftCorner, Vector2 topRightCorner, Material floorMaterial)
@@ -152,22 +174,69 @@ public class LevelCreator : MonoBehaviour
         }
     }
 
-    private Material GetMaterialForTerrainDice()
+    private int GetMaterialIndexForTerrainDice()
     {
         // Assuming your DiceData holds a list of dice with their names and values
         foreach (var dice in diceData.winnersDiceCombination)
         {
             if (dice.diceName == "Terrain Dice")
             {
-                // Map the dice value to the corresponding material
-                int index = Mathf.Clamp(dice.diceValue, 0, terrainMaterials.Length - 1); // Ensure we stay within bounds
-                Debug.Log(terrainMaterials[index]);
-                return terrainMaterials[index];
+                // Map the dice value to the corresponding index (ensure it's between 0 and 6 for 7 elements)
+                return Mathf.Clamp(dice.diceValue, 0, 6); 
             }
         }
 
-        // Fallback to default material if Terrain Dice is not found or invalid value
-        return terrainMaterials[0];
+        // Fallback to index 0 if Terrain Dice is not found or invalid value
+        return 0;
+    }
+
+    private int GetEnemyCountForEnemyDice()
+    {
+        // Assuming your DiceData holds a list of dice with their names and values
+        foreach (var dice in diceData.winnersDiceCombination)
+        {
+            if (dice.diceName == "Enemy Dice")
+            {
+                // Return the value from the Enemy Dice (you can clamp it to a max value if needed)
+                return Mathf.Max(0, dice.diceValue); 
+            }
+        }
+
+        // Fallback to 0 enemies if Enemy Dice is not found
+        return 0;
+    }
+
+    private void SpawnEnemiesInRoom(Node room, int materialIndex)
+    {
+        int enemyCount = GetEnemyCountForEnemyDice();  // Get number of enemies from Enemy Dice
+
+        // Check if the room is a full-sized room (larger than corridor width)
+        if ((room.TopRightAreaCorner.x - room.BottomLeftAreaCorner.x > corridorWidth) && 
+            (room.TopRightAreaCorner.y - room.BottomLeftAreaCorner.y > corridorWidth))
+        {
+            for (int i = 0; i < enemyCount; i++)
+            {
+                // Spawn enemies in the room above the ground
+                Vector3 enemySpawnPosition = new Vector3(
+                    UnityEngine.Random.Range(room.BottomLeftAreaCorner.x, room.TopRightAreaCorner.x), 
+                    1.0f,  // Adjusted spawn position to be above the ground
+                    UnityEngine.Random.Range(room.BottomLeftAreaCorner.y, room.TopRightAreaCorner.y)
+                );
+
+                // Ensure the spawn position is within the room bounds
+                if (IsPositionInRoom(room, enemySpawnPosition))
+                {
+                    GameObject enemy = Instantiate(enemyPrefab, enemySpawnPosition, Quaternion.identity);
+                    enemy.GetComponent<MeshRenderer>().material = enemyMaterials[materialIndex];  // Set enemy material
+                }
+            }
+        }
+    }
+
+    private bool IsPositionInRoom(Node room, Vector3 position)
+    {
+        return position.x >= room.BottomLeftAreaCorner.x && position.x <= room.TopRightAreaCorner.x &&
+               position.z >= room.BottomLeftAreaCorner.y && position.z <= room.TopRightAreaCorner.y;
     }
 
     private void AddWallPositionToList(Vector3 wallPosition, List<Vector3Int> wallList, List<Vector3Int> doorList)
