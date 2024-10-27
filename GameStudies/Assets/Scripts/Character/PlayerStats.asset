@@ -15,6 +15,6 @@ MonoBehaviour:
   defaultHealth: 100
   defaultSpeed: 5
   defaultDamage: 20
-  currentHealth: 0
-  currentSpeed: 0
-  currentDamage: 0
+  currentHealth: 100
+  currentSpeed: 5
+  currentDamage: 20

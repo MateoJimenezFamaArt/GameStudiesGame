@@ -12,9 +12,13 @@ public class PlayerHealth : MonoBehaviour
     private bool isInvulnerable = false;
     private Color originalColor;
 
+    private Animator animator;
+
     private void Start()
     {
         currentHealth = maxHealth;
+
+        animator = GetComponent<Animator>();
 
         if (playerRenderer != null)
         {
@@ -28,6 +32,7 @@ public class PlayerHealth : MonoBehaviour
         if (isInvulnerable) return;
 
         currentHealth -= damage;
+        animator.SetTrigger("Hurt");
 
         // Trigger invulnerability and visual feedback
         StartCoroutine(InvulnerabilityRoutine());

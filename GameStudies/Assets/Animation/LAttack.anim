@@ -6,7 +6,7 @@ AnimationClip:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: Attack
+  m_Name: LAttack
   serializedVersion: 7
   m_Legacy: 0
   m_Compressed: 0
@@ -39,15 +39,15 @@ AnimationClip:
       - serializedVersion: 3
         time: 0.15
         value: {x: 0.2439995, y: -0.19299984, z: 1.194}
-        inSlope: {x: 0, y: 0, z: 0.3999995}
-        outSlope: {x: 0, y: 0, z: 0.3999995}
+        inSlope: {x: 0, y: 0, z: 4.8300004}
+        outSlope: {x: 0, y: 0, z: 4.8300004}
         tangentMode: 0
         weightedMode: 0
         inWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
         outWeight: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
       - serializedVersion: 3
         time: 0.46666667
-        value: {x: 0.2439995, y: -0.19299984, z: 1.234}
+        value: {x: 0.2439995, y: -0.19299984, z: 2.469}
         inSlope: {x: 0, y: 0, z: 0}
         outSlope: {x: 0, y: 0, z: 0}
         tangentMode: 0
@@ -247,15 +247,15 @@ AnimationClip:
       - serializedVersion: 3
         time: 0.15
         value: 1.194
-        inSlope: 0.3999995
-        outSlope: 0.3999995
+        inSlope: 4.8300004
+        outSlope: 4.8300004
         tangentMode: 136
         weightedMode: 0
         inWeight: 0.33333334
         outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.46666667
-        value: 1.234
+        value: 2.469
         inSlope: 0
         outSlope: 0
         tangentMode: 136

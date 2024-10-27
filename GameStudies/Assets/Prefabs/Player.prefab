@@ -233,10 +233,22 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   punchRange: 2
+  lightAttackCooldown: 1
+  heavyAttackCooldown: 2
   hitMask:
     serializedVersion: 2
     m_Bits: 64
   playerStats: {fileID: 11400000, guid: f54978b60931b764c9549a803c133b16, type: 2}
+  leftHand: {fileID: 7237939678795264185}
+  rightHand: {fileID: 2055890524058174303}
+  elementMaterials:
+  - {fileID: 2100000, guid: 907d397e1fa8c164db048f76fd257f8f, type: 2}
+  - {fileID: 2100000, guid: 311fe80c16a635741960d1e6a02eb869, type: 2}
+  - {fileID: 2100000, guid: 5e1fb2c9044fe384c90ae11a14db4fe6, type: 2}
+  - {fileID: 2100000, guid: b8a548ef3cd985c4385714ba6d151a1c, type: 2}
+  - {fileID: 2100000, guid: 1842aed8eed33a54e81cc5f581d40837, type: 2}
+  - {fileID: 2100000, guid: af11affd15b6f224699c9fb6c0e4d64d, type: 2}
+  - {fileID: 2100000, guid: e36ecc612e8b0be4c808db05319411b8, type: 2}
 --- !u!114 &8536763331448869860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -392,7 +404,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 15303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -478,7 +490,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 15303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
