@@ -82,6 +82,7 @@ public class PlayerAttack : MonoBehaviour
         // Check if the collided object is an enemy
         if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
+            Debug.Log("Le pegue");
             EnemyHealth enemyHealth = other.gameObject.GetComponent<EnemyHealth>();
             if (enemyHealth != null)
             {

@@ -264,7 +264,7 @@ MonoBehaviour:
   rerollCountText: {fileID: 1650592190}
   rerollButton: {fileID: 2052989057}
   continueButton: {fileID: 48240382}
-  skipButton: {fileID: 961951149}
+  SkipButton: {fileID: 961951149}
   winnerText: {fileID: 701200894}
 --- !u!4 &1599588753
 Transform:
@@ -411,7 +411,7 @@ PrefabInstance:
       objectReference: {fileID: 1599588752}
     - target: {fileID: 1986907800472031407, guid: d4ffa210933b9fb4987a3329b4754b27, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
-      value: OnSkipButtonPressed
+      value: OnSkipRerollButtonPressed
       objectReference: {fileID: 0}
     - target: {fileID: 2859735714093525803, guid: d4ffa210933b9fb4987a3329b4754b27, type: 3}
       propertyPath: m_AnchorMax.y

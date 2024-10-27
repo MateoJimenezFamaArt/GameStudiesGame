@@ -234,12 +234,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   punchRange: 2
   lightAttackCooldown: 1
-  heavyAttackCooldown: 2
+  heavyAttackCooldown: 3
   hitMask:
     serializedVersion: 2
     m_Bits: 64
   playerStats: {fileID: 11400000, guid: f54978b60931b764c9549a803c133b16, type: 2}
-  leftHand: {fileID: 7237939678795264185}
   rightHand: {fileID: 2055890524058174303}
   elementMaterials:
   - {fileID: 2100000, guid: 907d397e1fa8c164db048f76fd257f8f, type: 2}
@@ -351,6 +350,7 @@ GameObject:
   - component: {fileID: 4292765990896091067}
   - component: {fileID: 1510385242968866842}
   - component: {fileID: 7324950062272432301}
+  - component: {fileID: 4494051551820485690}
   m_Layer: 0
   m_Name: Hand R
   m_TagString: Untagged
@@ -367,7 +367,7 @@ Transform:
   m_GameObject: {fileID: 2055890524058174303}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.24399948, y: -0.19299984, z: 0.5620003}
+  m_LocalPosition: {x: 0.2439995, y: -0.19299984, z: 0.5620003}
   m_LocalScale: {x: 0.17268, y: 0.17268, z: 0.17268}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -426,6 +426,27 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!135 &4494051551820485690
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2055890524058174303}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0.000015258789, y: 0, z: 0}
 --- !u!1 &7237939678795264185
 GameObject:
   m_ObjectHideFlags: 0
@@ -437,6 +458,7 @@ GameObject:
   - component: {fileID: 5035080690086289325}
   - component: {fileID: 1918372796080752694}
   - component: {fileID: 2708764258861022549}
+  - component: {fileID: 1230010230764487332}
   m_Layer: 0
   m_Name: Hand L
   m_TagString: Untagged
@@ -512,3 +534,24 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!135 &1230010230764487332
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7237939678795264185}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}

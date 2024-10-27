@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: PlayerStats
   m_EditorClassIdentifier: 
   defaultHealth: 100
-  defaultSpeed: 5
+  defaultSpeed: 2
   defaultDamage: 20
   currentHealth: 100
   currentSpeed: 5

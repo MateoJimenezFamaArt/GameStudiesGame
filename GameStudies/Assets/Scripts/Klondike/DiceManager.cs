@@ -12,7 +12,7 @@ public class DiceManager : MonoBehaviour
     public TextMeshProUGUI rerollCountText; // Assign a TextMeshProUGUI to show remaining reroll count
     public Button rerollButton; // Assign a Button for rerolling
     public Button continueButton; // Assign a Button for continuing to the next level
-    public Button skipButton; // Assign a Button for skipping rerolls
+    public Button SkipButton; // Assign a Button for continuing to the next level
     public TextMeshProUGUI winnerText; // Assign a TextMeshProUGUI to display the current winner
 
     private List<Dice> playerDice;
@@ -32,69 +32,14 @@ public class DiceManager : MonoBehaviour
         UpdateRerollCountUI(); // Update the UI for rerolls
         continueButton.gameObject.SetActive(false); // Hide continue button at start
         winnerText.text = ""; // Initialize winner text
-        skipButton.gameObject.SetActive(true); // Enable skip button at start
     }
 
     private void Update()
     {
         if (!isGameOver)
         {
-            HandleRerollInput();
+            return;
         }
-    }
-
-    // Attach this method to the skip button's OnClick event in the inspector
-    public void OnSkipButtonPressed()
-    {
-        isGameOver = true;
-        DetermineWinner();
-        rerollButton.interactable = false; // Disable reroll button
-        skipButton.gameObject.SetActive(false); // Hide skip button after skipping
-        continueButton.gameObject.SetActive(true); // Show continue button
-    }
-
-    // Handle player input for reroll
-    private void HandleRerollInput()
-    {
-        if (!isRerolling && rerollCount < maxRerolls)
-        {
-            isRerolling = true; // Lock this phase until player input is processed
-            rerollButton.interactable = true; // Enable the reroll button
-        }
-
-        if (Input.GetKeyDown(KeyCode.Y) && rerollCount < maxRerolls)
-        {
-            RerollPlayerDice();
-            isRerolling = false;
-            rerollCount++;
-            UpdateRerollCountUI(); // Update the UI for rerolls
-
-            if (rerollCount >= maxRerolls)
-            {
-                Debug.Log("Maximum rerolls reached. No more rerolls allowed.");
-                isGameOver = true;
-                winnerText.text = ""; // Clear the winner text
-                DetermineWinner();
-            }
-        }
-        else if (Input.GetKeyDown(KeyCode.N))
-        {
-            isRerolling = false;
-            isGameOver = true;
-            DetermineWinner();
-        }
-    }
-
-    // Reroll all of the player's dice
-    private void RerollPlayerDice()
-    {
-        Debug.Log("The player rerolls its dice...");
-        foreach (var dice in playerDice)
-        {
-            dice.Roll();
-        }
-        DisplayDiceResults(playerDice);
-        UpdateDiceResultsUI(); // Update the UI with new results
     }
 
     // Initialize the player's and bank's dice
@@ -119,9 +64,9 @@ public class DiceManager : MonoBehaviour
         {
             dice.Roll();
         }
-        DisplayDiceResults(bankDice);
+        //DisplayDiceResults(bankDice);
         UpdateDiceResultsUI(); // Update the UI with bank results
-        DetermineWinner(); // Check for a winner after rolling bank dice
+        DetermineWinner(); // Check for a winner after rolling bank dice NOT CHECL IT YET
     }
 
     private void RollPlayerDice()
@@ -131,19 +76,20 @@ public class DiceManager : MonoBehaviour
         {
             dice.Roll();
         }
-        DisplayDiceResults(playerDice);
+        //DisplayDiceResults(playerDice);
         UpdateDiceResultsUI(); // Update the UI with player results
         DetermineWinner(); // Check for a winner after rolling player dice
     }
 
-    // Display the result of the dice rolls in the console
+    /*
+    // Display teh result in console
     private void DisplayDiceResults(List<Dice> diceSet)
     {
         foreach (var dice in diceSet)
         {
             Debug.Log(dice.ToString());
         }
-    }
+    } */
 
     // Update the results of the dice in the assigned TextMeshPros
     private void UpdateDiceResultsUI()
@@ -159,56 +105,95 @@ public class DiceManager : MonoBehaviour
         {
             diceResultTexts[i + bankDice.Count].text = playerDice[i].CurrentValue.ToString();
         }
+
+        //HIGHILIGHT HERE?
     }
 
-    // Update the number of remaining rerolls in the UI
+    // Reroll all of the player's dice
+    private void RerollPlayerDice()
+    {
+        Debug.Log("The player rerolls its dice...");
+        foreach (var dice in playerDice)
+        {
+            dice.Roll();
+        }
+        //DisplayDiceResults(playerDice);
+        UpdateDiceResultsUI(); // Update the UI with new results
+    }
+
+    // Update the number of remaining rerolls in the UIrerollButton.interactable = false;
     private void UpdateRerollCountUI()
     {
         rerollCountText.text = (maxRerolls - rerollCount).ToString();
         if (rerollCount >= maxRerolls)
         {
-            rerollButton.interactable = false; // Disable the reroll button when out of rerolls
+             // Disable the reroll button when out of rerolls
         }
     }
 
-    // Determine the winner and highlight the dice
-    private void DetermineWinner()
+    // Update the HighlightWinningCombination method
+private void HighlightWinningCombination(List<Dice> diceSet, bool isWinner, bool isTie = false)
+{
+    Color highlightColor = isTie ? Color.red : (isWinner ? Color.yellow : Color.black); // Set color to red for ties
+
+    for (int i = 0; i < diceSet.Count; i++)
     {
-        string playerCombo = GetBestCombination(playerDice);
-        string bankCombo = GetBestCombination(bankDice);
+        // Determine the index in the UI TextMeshPro array
+        int uiIndex = diceSet == playerDice ? i + bankDice.Count : i; // Adjust index based on player or bank dice
+        diceResultTexts[uiIndex].color = highlightColor; // Change to highlight color based on winner or tie
+    }
+}
 
-        Debug.Log($"Player Combo: {playerCombo}");
-        Debug.Log($"Bank Combo: {bankCombo}");
+    // Modify the DetermineWinner method
+private void DetermineWinner()
+{
+    string playerCombo = GetBestCombination(playerDice);
+    string bankCombo = GetBestCombination(bankDice);
 
-        int comparison = CompareCombos(playerCombo, bankCombo);
+    Debug.Log($"Player Combo: {playerCombo}");
+    Debug.Log($"Bank Combo: {bankCombo}");
 
-        // Update the winner text based on who wins
-        if (comparison > 0)
+    int comparison = CompareCombos(playerCombo, bankCombo);
+
+    // Update the winner text based on who wins
+    if (comparison > 0)
+    {
+        winnerText.text = "Player Wins!";
+        HighlightWinningCombination(playerDice, true); // Highlight player's winning dice
+        HighlightWinningCombination(bankDice, false); // Reset bank's dice color
+        if (rerollCount <= 0)
         {
-            winnerText.text = "Player Wins!";
-            HighlightWinningCombination(playerDice, true); // Highlight player's winning dice
-            HighlightWinningCombination(bankDice, false); // Reset bank's dice color
-            SaveWinnersDiceCombination(playerDice);
-        }
-        else if (comparison < 0)
+            Debug.Log("Se va a guardar la compo de los dados del jugador");
+            SaveWinnersDiceCombination(playerDice);}
+        
+    }
+    else if (comparison < 0)
+    {
+        winnerText.text = "Enemies Wins!";
+        HighlightWinningCombination(bankDice, true); // Highlight bank's winning dice
+        HighlightWinningCombination(playerDice, false); // Reset player's dice color
+        if (rerollCount <= 0)
         {
-            winnerText.text = "Enemies Wins!";
-            HighlightWinningCombination(bankDice, true); // Highlight bank's winning dice
-            HighlightWinningCombination(playerDice, false); // Reset player's dice color
-            SaveWinnersDiceCombination(bankDice);
-        }
-        else
-        {
-            winnerText.text = "The tree shall decide what is to come..."; // Tie message
-            HighlightWinningCombination(playerDice, false, true); // Highlight both player's and bank's dice in red
-            HighlightWinningCombination(bankDice, false, true); // Highlight both player's and bank's dice in red
-            RollHiddenDice(); // Roll hidden dice for tie resolution
-        }
-
+            Debug.Log("Se va a guardar la compo de los dados del jugador");
+            SaveWinnersDiceCombination(bankDice);}
+    }
+    else
+    {
+        winnerText.text = "The tree shall decide what is to come..."; // Tie message
+        HighlightWinningCombination(playerDice, false, true); // Highlight both player's and bank's dice in red
+        HighlightWinningCombination(bankDice, false, true); // Highlight both player's and bank's dice in red
+        RollHiddenDice(); // Roll hidden dice for tie resolution
+    }
+    if (rerollCount <= 0)
+    {
         Debug.Log("The 'Klondike' game has finished, now sending the winners data to the next scene");
         continueButton.gameObject.SetActive(true); // Show continue button after the game ends
     }
 
+
+}
+
+    // Roll the hidden dice in case of a tie
     private void RollHiddenDice()
     {
         Debug.Log("Rolling hidden dice to determine the winner...");
@@ -219,27 +204,15 @@ public class DiceManager : MonoBehaviour
             hiddenDice[i].Roll(); // Roll each hidden die
             Debug.Log($"Hidden Die {i + 1}: {hiddenDice[i].CurrentValue}");
         }
+        // Implement logic for next level based on hiddenTotal if needed
+        // You can also highlight the hidden dice results in the UI if desired
         SaveWinnersDiceCombination(hiddenDice);
     }
 
-    private void HighlightWinningCombination(List<Dice> diceSet, bool isWinner, bool isTie = false)
-    {
-        Color highlightColor = isTie ? Color.red : (isWinner ? Color.yellow : Color.black); // Set color to red for ties
-
-        for (int i = 0; i < diceSet.Count; i++)
-        {
-            // Determine the index in the UI TextMeshPro array
-            int uiIndex = diceSet == playerDice ? i + bankDice.Count : i; // Adjust index based on player or bank dice
-            diceResultTexts[uiIndex].color = highlightColor; // Change to highlight color based on winner or tie
-        }
-    }
 
     // Save the winner's dice combination (name and value)
     private void SaveWinnersDiceCombination(List<Dice> winnersDice)
     {
-
-        skipButton.gameObject.SetActive(false);
-
         if (diceData == null)
         {
             Debug.LogError("DiceData is not assigned in DiceManager!");
@@ -250,23 +223,49 @@ public class DiceManager : MonoBehaviour
 
         foreach (var dice in winnersDice)
         {
-            diceData.AddWinnersDice(dice.DiceName, dice.CurrentValue); // Store each die's name and value
+            diceData.AddWinnersDice(dice.DiceName, dice.CurrentValue);
         }
 
-        Debug.Log("Winners' dice combination saved in DiceData.");
+        // Log the saved dice combination for debugging
+        Debug.Log("Winner's Dice Combination Saved:");
+        foreach (var dice in diceData.winnersDiceCombination)
+        {
+            Debug.Log($"Dice Name: {dice.diceName}, Dice Value: {dice.diceValue}");
+        }
     }
 
-    // Method to get the best combination
+    // Get the best combination of the dice
     private string GetBestCombination(List<Dice> diceSet)
     {
-        return ""; // Placeholder implementation
+        var groups = diceSet.GroupBy(d => d.CurrentValue)
+                            .Select(g => new { Value = g.Key, Count = g.Count() })
+                            .OrderByDescending(g => g.Count)
+                            .ThenByDescending(g => g.Value) // Sort by count and then by value
+                            .ToList();
+
+        if (groups[0].Count == 5) return "Five of a Kind";
+        if (groups[0].Count == 4) return "Four of a Kind";
+        if (groups[0].Count == 3 && groups[1].Count == 2) return "Full House";  // Three of a Kind + Pair
+        if (groups[0].Count == 3) return "Three of a Kind";
+        if (groups[0].Count == 2 && groups[1].Count == 2) return "Two Pair";
+        if (groups[0].Count == 2) return "One Pair";
+        return "High Card";
     }
 
-    // Method to compare combinations
-    private int CompareCombos(string combo1, string combo2)
+    // Compare two combinations to determine which is better
+    private int CompareCombos(string playerCombo, string bankCombo)
     {
-        return 0; // Placeholder implementation
+        List<string> comboRank = new List<string>
+        {
+            "High Card", "One Pair", "Two Pair", "Three of a Kind", "Full House", "Four of a Kind", "Five of a Kind"
+        };
+
+        int playerRank = comboRank.IndexOf(playerCombo);
+        int bankRank = comboRank.IndexOf(bankCombo);
+
+        return playerRank.CompareTo(bankRank);
     }
+
     private void LoadNextScene()
     {
         // Get the current scene index
@@ -286,7 +285,8 @@ public class DiceManager : MonoBehaviour
         SceneManager.LoadScene(nextSceneIndex);
     }
 
-        public void OnRerollButtonPressed()
+    // Attach this method to the reroll button's OnClick event in the inspector
+    public void OnRerollButtonPressed()
     {
         if (rerollCount < maxRerolls)
         {
@@ -299,9 +299,20 @@ public class DiceManager : MonoBehaviour
                 Debug.Log("Maximum rerolls reached. No more rerolls allowed.");
                 isGameOver = true;
                 winnerText.text = ""; // Clear the winner text
+                SkipButton.gameObject.SetActive(false);
                 DetermineWinner();
             }
         }
+    }
+
+    public void OnSkipRerollButtonPressed()
+    {
+        SkipButton.gameObject.SetActive(false); //Hide once clicked
+        continueButton.gameObject.SetActive(true); // Hide continue button at start
+        rerollCount = 0;
+        rerollCountText.text = rerollCount.ToString();
+        rerollButton.interactable = false;
+        DetermineWinner();
     }
 
     // Attach this method to the continue button's OnClick event in the inspector
