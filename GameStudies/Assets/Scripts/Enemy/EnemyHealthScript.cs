@@ -1,26 +1,33 @@
+using System.Collections;
 using UnityEngine;
 
 public class EnemyHealth : MonoBehaviour
 {
     public float maxHealth = 100;
+
+    [SerializeField]
     private float currentHealth;
 
-    private EnemyElement enemyElement; // Cache reference to EnemyElement
+    private EnemyElement enemyElement;
+    private EnemyAudioManager audioManager;
+    private EnemyStateMachine stateMachine;
 
     public event System.Action OnDeath;
 
     private void Start()
     {
         currentHealth = maxHealth;
-        enemyElement = GetComponent<EnemyElement>(); // Cache the EnemyElement reference
+        enemyElement = GetComponent<EnemyElement>();
+        audioManager = GetComponent<EnemyAudioManager>();
+         stateMachine = GetComponent<EnemyStateMachine>();
     }
 
     public void TakeDamage(float baseDamage, ElementType attackerElement)
     {
+        audioManager.PlayRandomHitSound();
         float finalDamage = CalculateDamage(baseDamage, attackerElement);
         currentHealth -= finalDamage;
 
-        // Log details about the damage received
         Debug.Log($"Enemy took damage: {finalDamage} from {attackerElement} element.");
         Debug.Log($"Base Damage: {baseDamage} | Final Damage: {finalDamage}");
 
@@ -33,10 +40,9 @@ public class EnemyHealth : MonoBehaviour
 
     private float CalculateDamage(float baseDamage, ElementType attackerElement)
     {
-        ElementType enemyElementType = enemyElement.enemyElement; // Get enemy's element type
+        ElementType enemyElementType = enemyElement.enemyElement;
         float damageMultiplier = GetDamageMultiplier(enemyElementType, attackerElement);
 
-        // Log the damage type and multiplier details
         string effectiveness = GetEffectiveness(enemyElementType, attackerElement);
         Debug.Log($"Attacker Element: {attackerElement}, Enemy Element: {enemyElementType}, Effectiveness: {effectiveness}");
 
@@ -45,18 +51,16 @@ public class EnemyHealth : MonoBehaviour
 
     private float GetDamageMultiplier(ElementType enemyElementType, ElementType attackerElement)
     {
-        // Damage multipliers based on your balance table
         float[,] multiplierTable = new float[,]
         {
-            { 1f, 2f, 0.8f, 1f, 1f, 1.3f }, // Light
-            { 0.8f, 1f, 1f, 1f, 2f, 1.3f }, // Dark
-            { 1f, 1f, 1f, 0.8f, 2f, 1.3f }, // Fire
-            { 1f, 1.3f, 1f, 1f, 0.8f, 1f }, // Water
-            { 1.3f, 0.8f, 1f, 2f, 1f, 1f }, // Grass
-            { 0.8f, 1f, 1.3f, 1f, 2f, 1f }  // Poison
+            { 1f, 2f, 0.8f, 1f, 1f, 1.3f },
+            { 0.8f, 1f, 1f, 1f, 2f, 1.3f },
+            { 1f, 1f, 1f, 0.8f, 2f, 1.3f },
+            { 1f, 1.3f, 1f, 1f, 0.8f, 1f },
+            { 1.3f, 0.8f, 1f, 2f, 1f, 1f },
+            { 0.8f, 1f, 1.3f, 1f, 2f, 1f }
         };
 
-        // Map ElementType to array indices
         int enemyIndex = (int)enemyElementType;
         int attackerIndex = (int)attackerElement;
 
@@ -78,6 +82,21 @@ public class EnemyHealth : MonoBehaviour
     private void Die()
     {
         Debug.Log("Enemy has died.");
+
+        stateMachine.currentState = 0;
+
+        stateMachine.enabled = false;
+
+        // Play the death sound
+        audioManager.PlayRandomDeathSound();
+
+        // Start the coroutine to destroy the enemy after a delay
+        StartCoroutine(DelayedDestroy());
+    }
+
+    private IEnumerator DelayedDestroy()
+    {
+        yield return new WaitForSeconds(5f); // Wait for 2 seconds (adjust as needed)
         Destroy(gameObject);
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine;
 public class EnemyStateMachine : MonoBehaviour
 {
     public enum EnemyState { Idle, Chasing, Attacking, Recovery, Dying }
-    private EnemyState currentState;
+    public EnemyState currentState;
 
     public float idleRadius = 10f;
     public float chaseSpeed = 4f;
@@ -16,6 +16,7 @@ public class EnemyStateMachine : MonoBehaviour
     private Rigidbody rb;
 
     private Animator animator;
+     private EnemyAudioManager audioManager;
 
     public event Action OnAttack; // Event for triggering attacks
     public event Action OnChase;  // Event for chasing
@@ -27,6 +28,7 @@ public class EnemyStateMachine : MonoBehaviour
         rb = GetComponent<Rigidbody>();
         StartCoroutine(StateMachine());
         animator = GetComponent<Animator>();
+        audioManager = GetComponent<EnemyAudioManager>();
     }
 
     private IEnumerator StateMachine()
@@ -70,6 +72,7 @@ public class EnemyStateMachine : MonoBehaviour
         while (currentState == EnemyState.Chasing)
         {
             OnChase?.Invoke(); // Notify listeners that enemy is chasing
+            //audioManager.PlayRandomChaseSound();
 
 
             Vector3 direction = (player.position - transform.position).normalized;
@@ -88,6 +91,7 @@ public class EnemyStateMachine : MonoBehaviour
     {
         animator.SetTrigger("Windup");
         OnAttack?.Invoke(); // Notify listeners that enemy is attacking
+        audioManager.PlayRandomPunchSound();
         animator.SetTrigger("Attack");
         yield return new WaitForSeconds(1f); // Assume some attack delay
         currentState = EnemyState.Recovery;
