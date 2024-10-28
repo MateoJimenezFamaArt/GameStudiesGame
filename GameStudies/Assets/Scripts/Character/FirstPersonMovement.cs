@@ -61,7 +61,7 @@ public class FirstPersonMovement : MonoBehaviour
         if (isGrounded)
         {
             rb.linearVelocity = new Vector3(rb.linearVelocity.x, 0f, rb.linearVelocity.z); // Reset vertical velocity
-            rb.AddForce(Vector3.up * jumpForce, ForceMode.VelocityChange);
+            rb.AddForce(Vector3.up * playerStats.currentJumpForce, ForceMode.VelocityChange);
             isGrounded = false;
         }
     }
@@ -69,7 +69,7 @@ public class FirstPersonMovement : MonoBehaviour
     private IEnumerator Dive()
     {
         isDiving = true;
-        rb.AddForce(transform.forward * diveForce, ForceMode.VelocityChange);
+        rb.AddForce(transform.forward * playerStats.currentDiveForce, ForceMode.VelocityChange);
         yield return new WaitForSeconds(1.0f); // Reduced for quicker recovery
         isDiving = false;
     }
@@ -94,13 +94,13 @@ public class FirstPersonMovement : MonoBehaviour
         if (collision.gameObject.CompareTag("Wall"))
         {
             Vector3 bounceDirection = Vector3.Reflect(playerVelocity, collision.contacts[0].normal);
-            rb.linearVelocity = bounceDirection * 0.5f; // Adjust for bounce effect
+            rb.linearVelocity = bounceDirection * playerStats.currentBounciness; // Adjust for bounce effect
         }
         // Knockback effect for enemies
         if (collision.gameObject.CompareTag("Enemy"))
         {
             Vector3 knockback = (transform.position - collision.transform.position).normalized;
-            rb.AddForce(knockback * 5f, ForceMode.Impulse); // Adjust force for desired knockback
+            rb.AddForce(knockback * playerStats.currentBounciness, ForceMode.Impulse); // Adjust force for desired knockback
         }
     }
 }

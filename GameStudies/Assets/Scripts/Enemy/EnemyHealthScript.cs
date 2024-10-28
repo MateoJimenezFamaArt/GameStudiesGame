@@ -14,22 +14,27 @@ public class EnemyHealth : MonoBehaviour
 
     public event System.Action OnDeath;
 
+    private bool isDead = false; // Flag to check if the enemy is already dead
+
     private void Start()
     {
         currentHealth = maxHealth;
         enemyElement = GetComponent<EnemyElement>();
         audioManager = GetComponent<EnemyAudioManager>();
-         stateMachine = GetComponent<EnemyStateMachine>();
+        stateMachine = GetComponent<EnemyStateMachine>();
     }
 
     public void TakeDamage(float baseDamage, ElementType attackerElement)
     {
+        // Check if the enemy is already dead; if so, ignore further damage
+        if (isDead) return;
+
         audioManager.PlayRandomHitSound();
         float finalDamage = CalculateDamage(baseDamage, attackerElement);
         currentHealth -= finalDamage;
 
-        Debug.Log($"Enemy took damage: {finalDamage} from {attackerElement} element.");
-        Debug.Log($"Base Damage: {baseDamage} | Final Damage: {finalDamage}");
+        /*Debug.Log($"Enemy took damage: {finalDamage} from {attackerElement} element.");
+        Debug.Log($"Base Damage: {baseDamage} | Final Damage: {finalDamage}");*/
 
         if (currentHealth <= 0)
         {
@@ -44,7 +49,7 @@ public class EnemyHealth : MonoBehaviour
         float damageMultiplier = GetDamageMultiplier(enemyElementType, attackerElement);
 
         string effectiveness = GetEffectiveness(enemyElementType, attackerElement);
-        Debug.Log($"Attacker Element: {attackerElement}, Enemy Element: {enemyElementType}, Effectiveness: {effectiveness}");
+        //Debug.Log($"Attacker Element: {attackerElement}, Enemy Element: {enemyElementType}, Effectiveness: {effectiveness}");
 
         return Mathf.RoundToInt(baseDamage * damageMultiplier);
     }
@@ -53,6 +58,7 @@ public class EnemyHealth : MonoBehaviour
     {
         float[,] multiplierTable = new float[,]
         {
+            { 1f, 1f, 1f, 1f, 1f, 1f },
             { 1f, 2f, 0.8f, 1f, 1f, 1.3f },
             { 0.8f, 1f, 1f, 1f, 2f, 1.3f },
             { 1f, 1f, 1f, 0.8f, 2f, 1.3f },
@@ -81,12 +87,11 @@ public class EnemyHealth : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log("Enemy has died.");
+        isDead = true; // Set the enemy as dead to prevent further damage
 
-        stateMachine.currentState = 0;
+        //Debug.Log("Enemy has died.");
 
-        stateMachine.enabled = false;
-
+        stateMachine.SetState(EnemyStateMachine.EnemyState.Dying);
         // Play the death sound
         audioManager.PlayRandomDeathSound();
 
@@ -96,7 +101,7 @@ public class EnemyHealth : MonoBehaviour
 
     private IEnumerator DelayedDestroy()
     {
-        yield return new WaitForSeconds(5f); // Wait for 2 seconds (adjust as needed)
+        yield return new WaitForSeconds(6f); // Wait for 5 seconds (adjust as needed)
         Destroy(gameObject);
     }
 }

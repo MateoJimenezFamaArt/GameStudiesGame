@@ -26,6 +26,7 @@ public class DiceManager : MonoBehaviour
 
     private void Start()
     {
+        ReleaseCursor();
         InitializeGame();
         RollBankDice();
         RollPlayerDice();
@@ -300,6 +301,7 @@ private void DetermineWinner()
                 isGameOver = true;
                 winnerText.text = ""; // Clear the winner text
                 SkipButton.gameObject.SetActive(false);
+                continueButton.gameObject.SetActive(true);
                 DetermineWinner();
             }
         }
@@ -320,4 +322,11 @@ private void DetermineWinner()
     {
         LoadNextScene();
     }
+
+    private void ReleaseCursor()
+{
+    Cursor.lockState = CursorLockMode.None; // Unlocks the cursor
+    Cursor.visible = true;                  // Makes the cursor visible
+}
+
 }

@@ -19,7 +19,6 @@ public class LevelCreator : MonoBehaviour
     [Range(0, 2)]
     public int roomOffset;
     public GameObject wallVertical, wallHorizontal;
-
     // New Variables
     public DiceData diceData; // Reference to the DiceData ScriptableObject
     public Material[] floorMaterials; // Array of materials for floors (7 elements)
@@ -230,6 +229,7 @@ private void SpawnPlayerInRoom(List<Node> rooms)
                     enemy.GetComponent<MeshRenderer>().material = enemyMaterials[materialIndex];  // Set enemy material
                 }
             }
+            
         }
     }
 

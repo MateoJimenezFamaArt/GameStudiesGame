@@ -12,6 +12,8 @@ public class EnemyStateMachine : MonoBehaviour
     public float attackRange = 2f;
     public float recoveryTime = 2f;
 
+    public float DeathAnimationTime = 0f;
+
     private Transform player;
     private Rigidbody rb;
 
@@ -48,6 +50,9 @@ public class EnemyStateMachine : MonoBehaviour
                     break;
                 case EnemyState.Recovery:
                     yield return StartCoroutine(RecoveryState());
+                    break;
+                case EnemyState.Dying:
+                    yield return StartCoroutine(DyingState());
                     break;
             }
             yield return null;
@@ -102,6 +107,19 @@ public class EnemyStateMachine : MonoBehaviour
         animator.SetTrigger("Recovery");
         yield return new WaitForSeconds(recoveryTime);
         currentState = EnemyState.Idle;
+    }
+
+    private IEnumerator DyingState()
+    {
+        currentState = EnemyState.Dying;
+        while (currentState == EnemyState.Dying)
+        {
+            animator.SetTrigger("Death");
+            rb.linearVelocity = new Vector3(0,0,0);
+        }
+        
+        yield return null;
+        
     }
 
     public void SetState(EnemyState newState)

@@ -3,7 +3,6 @@ using System.Collections;
 
 public class PlayerAttack : MonoBehaviour
 {
-    public float punchRange = 2f;
     public float lightAttackCooldown = 1f;
     public float heavyAttackCooldown = 2f;
     public LayerMask hitMask;
@@ -65,14 +64,14 @@ public class PlayerAttack : MonoBehaviour
         if (attackType == AttackType.Light)
         {
             canLightAttack = false;
-            yield return new WaitForSeconds(lightAttackCooldown);
+            yield return new WaitForSeconds(playerStats.currentLightAttackCooldownReduction);
             
             canLightAttack = true;
         }
         else if (attackType == AttackType.Heavy)
         {
             canHeavyAttack = false;
-            yield return new WaitForSeconds(heavyAttackCooldown);
+            yield return new WaitForSeconds(playerStats.currentHeavyAttackDamage);
             canHeavyAttack = true;
         }
     }
@@ -82,15 +81,15 @@ public class PlayerAttack : MonoBehaviour
         // Check if the collided object is an enemy
         if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
-            Debug.Log("Le pegue");
+            //Debug.Log("Le pegue");
             EnemyHealth enemyHealth = other.gameObject.GetComponent<EnemyHealth>();
             if (enemyHealth != null)
             {
                 // Apply damage with elemental effect
-                float damage = currentAttackType == AttackType.Light ? playerStats.currentDamage : playerStats.currentDamage * 1.5f;
+                float damage = currentAttackType == AttackType.Light ? playerStats.currentDamage * playerStats.currentLightAttackDamage : playerStats.currentDamage * playerStats.currentHeavyAttackDamage;
                 enemyHealth.TakeDamage(damage, currentElementType);
                 Debug.Log("Le zampe un traque al enemigo y le hize " + damage);
-                Debug.Log("Y ese traque fue de " + currentElementType);
+                //Debug.Log("Y ese traque fue de " + currentElementType);
 
                 // Apply knockback based on attack type
                 Rigidbody enemyRb = other.gameObject.GetComponent<Rigidbody>();
@@ -120,6 +119,6 @@ public class PlayerAttack : MonoBehaviour
     {
         currentElementType = (ElementType)(((int)currentElementType + 1) % 7); // Loop through elements
         UpdateElementMaterial();
-        Debug.Log("Current Element: " + currentElementType);
+        //Debug.Log("Current Element: " + currentElementType);
     }
 }

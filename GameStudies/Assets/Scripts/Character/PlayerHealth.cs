@@ -3,12 +3,12 @@ using UnityEngine;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public int maxHealth = 100;
+    public float maxHealth = 100;
     public float invulnerabilityDuration = 0.5f; // Duration of invulnerability after taking damage
     public Renderer playerRenderer; // Reference to the player renderer for visual feedback (optional)
     public Color invulnerableColor = Color.red; // Color to show when invulnerable (optional)
 
-    private int currentHealth;
+    private float currentHealth;
     private bool isInvulnerable = false;
     private Color originalColor;
 
@@ -26,7 +26,7 @@ public class PlayerHealth : MonoBehaviour
         }
     }
 
-    public void TakeDamage(int damage)
+    public void TakeDamage(float damage)
     {
         // If the player is invulnerable, ignore the damage
         if (isInvulnerable) return;
@@ -37,7 +37,7 @@ public class PlayerHealth : MonoBehaviour
         // Trigger invulnerability and visual feedback
         StartCoroutine(InvulnerabilityRoutine());
 
-        Debug.Log("Player took damage! Current health: " + currentHealth);
+        //Debug.Log("Player took damage! Current health: " + currentHealth);
 
         if (currentHealth <= 0)
         {
@@ -71,7 +71,7 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
-        Debug.Log("Player died!");
+        //Debug.Log("Player died!");
         // Add death logic here (e.g., trigger death animation, restart level, etc.)
     }
 }
