@@ -127,7 +127,6 @@ GameObject:
   - component: {fileID: 7046187675808365415}
   - component: {fileID: 6895805442914744210}
   - component: {fileID: 8754507503222503473}
-  - component: {fileID: 8800524669905065559}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -264,6 +263,8 @@ MonoBehaviour:
   invulnerabilityDuration: 0.5
   playerRenderer: {fileID: 6895805442914744210}
   invulnerableColor: {r: 1, g: 0, b: 0, a: 1}
+  mainCamera: {fileID: 420080332178216467}
+  deathDelay: 2
 --- !u!95 &7046187675808365415
 Animator:
   serializedVersion: 7
@@ -339,19 +340,6 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 363815205597976744}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
---- !u!114 &8800524669905065559
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 363815205597976744}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4d6efd29d13b4ac42abe1e85f092327e, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  playerStats: {fileID: 11400000, guid: f54978b60931b764c9549a803c133b16, type: 2}
 --- !u!1 &2055890524058174303
 GameObject:
   m_ObjectHideFlags: 0

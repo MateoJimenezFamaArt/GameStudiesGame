@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
@@ -7,22 +8,29 @@ public class PlayerHealth : MonoBehaviour
     public float invulnerabilityDuration = 0.5f; // Duration of invulnerability after taking damage
     public Renderer playerRenderer; // Reference to the player renderer for visual feedback (optional)
     public Color invulnerableColor = Color.red; // Color to show when invulnerable (optional)
+    public Camera mainCamera; // Reference to the main camera to turn the screen red
+    public float deathDelay = 2f; // Delay before transitioning to death scene
 
     private float currentHealth;
     private bool isInvulnerable = false;
     private Color originalColor;
+    private Color originalCameraColor;
 
     private Animator animator;
 
     private void Start()
     {
         currentHealth = maxHealth;
-
         animator = GetComponent<Animator>();
 
+        // Store original colors for resetting
         if (playerRenderer != null)
         {
             originalColor = playerRenderer.material.color;
+        }
+        if (mainCamera != null)
+        {
+            originalCameraColor = mainCamera.backgroundColor;
         }
     }
 
@@ -37,8 +45,6 @@ public class PlayerHealth : MonoBehaviour
         // Trigger invulnerability and visual feedback
         StartCoroutine(InvulnerabilityRoutine());
 
-        //Debug.Log("Player took damage! Current health: " + currentHealth);
-
         if (currentHealth <= 0)
         {
             Die();
@@ -47,22 +53,18 @@ public class PlayerHealth : MonoBehaviour
 
     private IEnumerator InvulnerabilityRoutine()
     {
-        // Set player as invulnerable
         isInvulnerable = true;
 
-        // Optional: Visual feedback (change player color or material to indicate invulnerability)
+        // Visual feedback for invulnerability
         if (playerRenderer != null)
         {
             playerRenderer.material.color = invulnerableColor;
         }
 
-        // Wait for the duration of invulnerability
         yield return new WaitForSeconds(invulnerabilityDuration);
 
-        // Reset invulnerability
         isInvulnerable = false;
 
-        // Optional: Reset visual feedback to original color
         if (playerRenderer != null)
         {
             playerRenderer.material.color = originalColor;
@@ -71,7 +73,8 @@ public class PlayerHealth : MonoBehaviour
 
     private void Die()
     {
-        //Debug.Log("Player died!");
-        // Add death logic here (e.g., trigger death animation, restart level, etc.)
+        RunsManager.Instance.runsCompleted = 0;
+        Debug.Log("Player died!");
+        SceneManager.LoadScene("You Are Dead");
     }
 }

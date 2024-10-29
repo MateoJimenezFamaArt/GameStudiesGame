@@ -16,19 +16,19 @@ MonoBehaviour:
   defaultSpeed: 2
   defaultDamage: 10
   defaultDiveForce: 2
-  defaultLightAttackCooldownReduction: 5
-  defaultHeavyAttackCooldownReduction: 10
+  defaultLightAttackCooldownReduction: 3
+  defaultHeavyAttackCooldownReduction: 5
   defaultJumpForce: 3
   defaultBounciness: 0.1
   defaultHeavyAttackDamage: 1.1
   defaultLightAttackDamage: 1
   currentHealth: 100
-  currentSpeed: 2
-  currentDamage: 10
-  currentDiveForce: 10
-  currentLightAttackCooldownReduction: 1
-  currentHeavyAttackCooldownReduction: 1
-  currentJumpForce: 10
-  currentBounciness: 1
-  currentHeavyAttackDamage: 3
-  currentLightAttackDamage: 1.5
+  currentSpeed: 12
+  currentDamage: 50
+  currentDiveForce: 2
+  currentLightAttackCooldownReduction: 5
+  currentHeavyAttackCooldownReduction: 10
+  currentJumpForce: 3
+  currentBounciness: 0.1
+  currentHeavyAttackDamage: 1.1
+  currentLightAttackDamage: 1

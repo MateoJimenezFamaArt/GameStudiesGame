@@ -1,5 +1,5 @@
-using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 [CreateAssetMenu(fileName = "PlayerStats", menuName = "ScriptableObjects/PlayerStats", order = 1)]
 public class PlayerStats : ScriptableObject
@@ -7,71 +7,59 @@ public class PlayerStats : ScriptableObject
     public float defaultHealth = 100f;
     public float defaultSpeed = 5f;
     public float defaultDamage = 20f;
-
-    // New stats
-    public float defaultDiveForce = 10f; 
-    public float defaultLightAttackCooldownReduction = 1f; // Time in seconds
-    public float defaultHeavyAttackCooldownReduction = 1f; // Time in seconds
+    public float defaultDiveForce = 10f;
+    public float defaultLightAttackCooldownReduction = 1f;
+    public float defaultHeavyAttackCooldownReduction = 1f;
     public float defaultJumpForce = 10f;
-    public float defaultBounciness = 1f; // Factor of bounciness
+    public float defaultBounciness = 1f;
     public float defaultHeavyAttackDamage = 3f;
     public float defaultLightAttackDamage = 1f;
 
-    [HideInInspector] public float currentHealth; //YA
-    [HideInInspector] public float currentSpeed; //YA
-    [HideInInspector] public float currentDamage; //YA
+    [HideInInspector] public float currentHealth;
+    [HideInInspector] public float currentSpeed;
+    [HideInInspector] public float currentDamage;
+    [HideInInspector] public float currentDiveForce;
+    [HideInInspector] public float currentLightAttackCooldownReduction;
+    [HideInInspector] public float currentHeavyAttackCooldownReduction;
+    [HideInInspector] public float currentJumpForce;
+    [HideInInspector] public float currentBounciness;
+    [HideInInspector] public float currentHeavyAttackDamage;
+    [HideInInspector] public float currentLightAttackDamage;
 
-    // New current stats
-    [HideInInspector] public float currentDiveForce; //YA
-    [HideInInspector] public float currentLightAttackCooldownReduction; //YA
-    [HideInInspector] public float currentHeavyAttackCooldownReduction; //YA
-    [HideInInspector] public float currentJumpForce; // YA
-    [HideInInspector] public float currentBounciness; //YA
-    [HideInInspector] public float currentHeavyAttackDamage;//YA
-    [HideInInspector] public float currentLightAttackDamage;//YA
-
-    // Method to reset stats to default values
-
+    // Events for each stat change
+    public UnityEvent<float> OnHealthChanged = new UnityEvent<float>();
+    public UnityEvent<float> OnSpeedChanged = new UnityEvent<float>();
+    public UnityEvent<float> OnDamageChanged = new UnityEvent<float>();
+    public UnityEvent<float> OnDiveForceChanged = new UnityEvent<float>();
+    public UnityEvent<float> OnLightAttackCooldownReductionChanged = new UnityEvent<float>();
+    public UnityEvent<float> OnHeavyAttackCooldownReductionChanged = new UnityEvent<float>();
+    public UnityEvent<float> OnJumpForceChanged = new UnityEvent<float>();
+    public UnityEvent<float> OnBouncinessChanged = new UnityEvent<float>();
+    public UnityEvent<float> OnHeavyAttackDamageChanged = new UnityEvent<float>();
+    public UnityEvent<float> OnLightAttackDamageChanged = new UnityEvent<float>();
 
     public void ResetStats()
     {
-        currentHealth = defaultHealth;
-        currentSpeed = defaultSpeed;
-        currentDamage = defaultDamage;
-
-        // Reset new stats
-        currentDiveForce = defaultDiveForce;
-        currentLightAttackCooldownReduction = defaultLightAttackCooldownReduction;
-        currentHeavyAttackCooldownReduction = defaultHeavyAttackCooldownReduction;
-        currentJumpForce = defaultJumpForce;
-        currentBounciness = defaultBounciness;
-        currentHeavyAttackDamage = defaultHeavyAttackDamage;
-        currentLightAttackDamage = defaultLightAttackDamage;
+        ModifyHealth(defaultHealth - currentHealth);
+        ModifySpeed(defaultSpeed - currentSpeed);
+        ModifyDamage(defaultDamage - currentDamage);
+        ModifyDiveForce(defaultDiveForce - currentDiveForce);
+        ModifyLightAttackCooldownReduction(defaultLightAttackCooldownReduction - currentLightAttackCooldownReduction);
+        ModifyHeavyAttackCooldownReduction(defaultHeavyAttackCooldownReduction - currentHeavyAttackCooldownReduction);
+        ModifyJumpForce(defaultJumpForce - currentJumpForce);
+        ModifyBounciness(defaultBounciness - currentBounciness);
+        ModifyHeavyAttackDamage(defaultHeavyAttackDamage - currentHeavyAttackDamage);
+        ModifyLightAttackDamage(defaultLightAttackDamage - currentLightAttackDamage);
     }
 
-    // Method to apply upgrades (or downgrades)
-    public void ModifyHealth(float amount)
-    {
-        currentHealth += amount;
-        currentHealth = Mathf.Clamp(currentHealth, 0, defaultHealth); // Prevent negative health
-    }
-
-    public void ModifySpeed(float amount)
-    {
-        currentSpeed += amount;
-    }
-
-    public void ModifyDamage(float amount)
-    {
-        currentDamage += amount;
-    }
-    
-    // New methods to modify stats
-    public void ModifyDiveForce(float amount) { currentDiveForce += amount; }
-    public void ModifyLightAttackCooldownReduction(float amount) { currentLightAttackCooldownReduction += amount; }
-    public void ModifyHeavyAttackCooldownReduction(float amount) { currentHeavyAttackCooldownReduction += amount; }
-    public void ModifyJumpForce(float amount) { currentJumpForce += amount; }
-    public void ModifyBounciness(float amount) { currentBounciness += amount; }
-    public void ModifyHeavyAttackDamage(float amount) { currentHeavyAttackDamage += amount; }
-    public void ModifyLightAttackDamage(float amount) { currentLightAttackDamage += amount; }
+    public void ModifyHealth(float amount) { currentHealth += amount; OnHealthChanged.Invoke(currentHealth); }
+    public void ModifySpeed(float amount) { currentSpeed += amount; OnSpeedChanged.Invoke(currentSpeed); }
+    public void ModifyDamage(float amount) { currentDamage += amount; OnDamageChanged.Invoke(currentDamage); }
+    public void ModifyDiveForce(float amount) { currentDiveForce += amount; OnDiveForceChanged.Invoke(currentDiveForce); }
+    public void ModifyLightAttackCooldownReduction(float amount) { currentLightAttackCooldownReduction += amount; OnLightAttackCooldownReductionChanged.Invoke(currentLightAttackCooldownReduction); }
+    public void ModifyHeavyAttackCooldownReduction(float amount) { currentHeavyAttackCooldownReduction += amount; OnHeavyAttackCooldownReductionChanged.Invoke(currentHeavyAttackCooldownReduction); }
+    public void ModifyJumpForce(float amount) { currentJumpForce += amount; OnJumpForceChanged.Invoke(currentJumpForce); }
+    public void ModifyBounciness(float amount) { currentBounciness += amount; OnBouncinessChanged.Invoke(currentBounciness); }
+    public void ModifyHeavyAttackDamage(float amount) { currentHeavyAttackDamage += amount; OnHeavyAttackDamageChanged.Invoke(currentHeavyAttackDamage); }
+    public void ModifyLightAttackDamage(float amount) { currentLightAttackDamage += amount; OnLightAttackDamageChanged.Invoke(currentLightAttackDamage); }
 }

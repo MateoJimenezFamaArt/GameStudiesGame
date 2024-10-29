@@ -297,6 +297,7 @@ MonoBehaviour:
   chaseSpeed: 4
   attackRange: 2
   recoveryTime: 2
+  DeathAnimationTime: 0
 --- !u!114 &1985474960751289344
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -324,7 +325,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   attackHitbox: {fileID: 8335296540826295359}
-  attackDamage: 80
+  attackDamage: 20
 --- !u!114 &7309884408744097513
 MonoBehaviour:
   m_ObjectHideFlags: 0
