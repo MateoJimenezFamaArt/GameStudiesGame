@@ -4,12 +4,13 @@ public class ItemPickup : MonoBehaviour
 {
     public StatType statToModify; // Dropdown to select which stat to modify
     public float modificationAmount = 20f; // Amount to modify the selected stat
+    public PlayerStats statsManager;
 
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))
         {
-            PlayerStatsManager statsManager = other.GetComponent<PlayerStatsManager>();
+            
             if (statsManager != null)
             {
                 ApplyStatModification(statsManager);
@@ -18,39 +19,39 @@ public class ItemPickup : MonoBehaviour
         }
     }
 
-    private void ApplyStatModification(PlayerStatsManager statsManager)
+    private void ApplyStatModification(PlayerStats statsManager)
     {
         switch (statToModify)
         {
             case StatType.Health:
-                statsManager.ApplyHealthUpgrade(modificationAmount);
+                statsManager.ModifyHealth(modificationAmount);
                 break;
             case StatType.Speed:
-                statsManager.ApplySpeedUpgrade(modificationAmount);
+                statsManager.ModifySpeed(modificationAmount);
                 break;
             case StatType.Damage:
-                statsManager.ApplyDamageUpgrade(modificationAmount);
+                statsManager.ModifyDamage(modificationAmount);
                 break;
             case StatType.DiveForce:
-                statsManager.ApplyDiveForceUpgrade(modificationAmount);
+                statsManager.ModifyDiveForce(modificationAmount);
                 break;
             case StatType.LightAttackCooldownReduction:
-                statsManager.ApplyLightAttackCooldownReduction(modificationAmount);
+                statsManager.ModifyLightAttackCooldownReduction(modificationAmount);
                 break;
             case StatType.HeavyAttackCooldownReduction:
-                statsManager.ApplyHeavyAttackCooldownReduction(modificationAmount);
+                statsManager.ModifyHeavyAttackCooldownReduction(modificationAmount);
                 break;
             case StatType.JumpForce:
-                statsManager.ApplyJumpForceUpgrade(modificationAmount);
+                statsManager.ModifyJumpForce(modificationAmount);
                 break;
             case StatType.Bounciness:
-                statsManager.ApplyBouncinessUpgrade(modificationAmount);
+                statsManager.ModifyBounciness(modificationAmount);
                 break;
             case StatType.HeavyAttackDamage:
-                statsManager.ApplyHeavyAttackDamageUpgrade(modificationAmount);
+                statsManager.ModifyHeavyAttackDamage(modificationAmount);
                 break;
             case StatType.LightAttackDamage:
-                statsManager.ApplyLightAttackDamageUpgrade(modificationAmount);
+                statsManager.ModifyLightAttackDamage(modificationAmount);
                 break;
             default:
                 Debug.LogWarning("Stat type not recognized!");

@@ -5,8 +5,6 @@ public class RunsManager : MonoBehaviour
     public static RunsManager Instance { get; private set; }
 
     public PlayerStats playerStats; // Reference to the PlayerStats ScriptableObject
-    private PlayerStatsManager playerStatsManager;
-
     public int runsCompleted = 0; // Number of runs completed
 
     private void Awake()
@@ -25,16 +23,6 @@ public class RunsManager : MonoBehaviour
         // Initialize player stats
         playerStats.ResetStats();
     }
-
-   /* private void Start()
-    {
-            // Find PlayerStatsManager
-        playerStatsManager = FindObjectOfType<PlayerStatsManager>();
-        if (playerStatsManager == null)
-        {
-            Debug.LogError("PlayerStatsManager not found in the scene!");
-        }
-    }*/
 
     public void CompleteRun()
     {

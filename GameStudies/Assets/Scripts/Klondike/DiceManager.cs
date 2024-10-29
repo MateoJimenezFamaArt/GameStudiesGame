@@ -19,7 +19,6 @@ public class DiceManager : MonoBehaviour
     private List<Dice> bankDice;
     private List<Dice> hiddenDice; // List to hold hidden dice for tie resolution
     private string[] diceNames = { "Terrain Dice", "Enemy Dice", "Chest Dice", "Trap Dice", "Bonus Dice" };
-    private bool isRerolling = false;
     private bool isGameOver = false;
     private int rerollCount = 0;
     private const int maxRerolls = 2; // Maximum rerolls allowed
