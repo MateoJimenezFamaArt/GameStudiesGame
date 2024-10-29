@@ -10,9 +10,14 @@ public class EnemyManager : MonoBehaviour
     private int remainingEnemies;      // Count of remaining enemies
     private bool levelCleared;         // Flag to track if level has been cleared
 
+    private PlayerHealth health; //reference to health
+
+    public RunsManager RunsManager;
+
     private void Start()
     {
-        StartCoroutine(InitializeEnemyCountWithDelay(2.0f)); // Delay to initialize enemy count
+        StartCoroutine(InitializeEnemyCountWithDelay(0.5f)); // Delay to initialize enemy count
+        StartCoroutine(HoldUpForReference());
     }
 
     // Coroutine to initialize enemy count after a delay
@@ -55,7 +60,8 @@ public class EnemyManager : MonoBehaviour
             if (remainingEnemies <= 0 && totalEnemyCount > 0) // Check if all enemies are defeated
             {
                 Debug.Log("All enemies defeated! Player cleared the level.");
-                RunsManager.Instance.runsCompleted++;
+                health.currentHealth = RunsManager.Instance.PreservedHealth;
+                RunsManager.Instance.CompleteRun();
                 levelCleared = true; // Set the level cleared flag
                 StartCoroutine(ChangeSceneAfterDelay(5.0f)); // Wait 5 seconds and change scene
             }
@@ -72,5 +78,11 @@ public class EnemyManager : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         SceneManager.LoadScene("KlondikeTest"); // Replace with the actual scene name
+    }
+
+        private IEnumerator HoldUpForReference()
+    {
+        yield return new WaitForSeconds(0.3f); // Wait for 5 seconds (adjust as needed)
+        health = GameObject.FindWithTag("Player").GetComponent<PlayerHealth>();
     }
 }

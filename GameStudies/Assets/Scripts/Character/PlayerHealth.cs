@@ -1,4 +1,5 @@
 using System.Collections;
+using TMPro;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -11,16 +12,25 @@ public class PlayerHealth : MonoBehaviour
     public Camera mainCamera; // Reference to the main camera to turn the screen red
     public float deathDelay = 2f; // Delay before transitioning to death scene
 
-    private float currentHealth;
+    public float currentHealth;
     private bool isInvulnerable = false;
     private Color originalColor;
     private Color originalCameraColor;
 
     private Animator animator;
 
+    private TextMeshProUGUI currentlife;
+
     private void Start()
     {
-        currentHealth = maxHealth;
+        if (RunsManager.Instance.runsCompleted == 0)
+        {
+            currentHealth = maxHealth;
+        } else 
+        {
+            currentHealth = RunsManager.Instance.PreservedHealth;
+        }
+
         animator = GetComponent<Animator>();
 
         // Store original colors for resetting
@@ -32,6 +42,9 @@ public class PlayerHealth : MonoBehaviour
         {
             originalCameraColor = mainCamera.backgroundColor;
         }
+        currentlife = GameObject.Find("Health").GetComponent<TextMeshProUGUI>();
+
+        currentlife.text = "Player Health: " + currentHealth.ToString();
     }
 
     public void TakeDamage(float damage)
@@ -41,6 +54,8 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth -= damage;
         animator.SetTrigger("Hurt");
+
+        currentlife.text = "Player Health: " + currentHealth.ToString();
 
         // Trigger invulnerability and visual feedback
         StartCoroutine(InvulnerabilityRoutine());

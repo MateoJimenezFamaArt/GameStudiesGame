@@ -127,6 +127,7 @@ GameObject:
   - component: {fileID: 7046187675808365415}
   - component: {fileID: 6895805442914744210}
   - component: {fileID: 8754507503222503473}
+  - component: {fileID: 7611071717380157408}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -232,8 +233,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50b9ad1beebc5c3468d7597b7bba0a85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  lightAttackCooldown: 1
-  heavyAttackCooldown: 3
   hitMask:
     serializedVersion: 2
     m_Bits: 64
@@ -247,6 +246,8 @@ MonoBehaviour:
   - {fileID: 2100000, guid: 1842aed8eed33a54e81cc5f581d40837, type: 2}
   - {fileID: 2100000, guid: af11affd15b6f224699c9fb6c0e4d64d, type: 2}
   - {fileID: 2100000, guid: e36ecc612e8b0be4c808db05319411b8, type: 2}
+  lightAttackCooldownText: {fileID: 0}
+  heavyAttackCooldownText: {fileID: 0}
 --- !u!114 &8536763331448869860
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -340,6 +341,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 363815205597976744}
   m_Mesh: {fileID: 10208, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!114 &7611071717380157408
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 363815205597976744}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e6035740c80605c4da1271eaeb0e0466, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  objectToToggle: {fileID: 0}
 --- !u!1 &2055890524058174303
 GameObject:
   m_ObjectHideFlags: 0

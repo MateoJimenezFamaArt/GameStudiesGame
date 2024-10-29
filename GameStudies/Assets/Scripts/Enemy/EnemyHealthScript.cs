@@ -58,7 +58,7 @@ public class EnemyHealth : MonoBehaviour
     {
         float[,] multiplierTable = new float[,]
         {
-            { 1f, 1f, 1f, 1f, 1f, 1f },
+            { 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f },
             { 1f, 2f, 0.8f, 1f, 1f, 1.3f },
             { 0.8f, 1f, 1f, 1f, 2f, 1.3f },
             { 1f, 1f, 1f, 0.8f, 2f, 1.3f },
