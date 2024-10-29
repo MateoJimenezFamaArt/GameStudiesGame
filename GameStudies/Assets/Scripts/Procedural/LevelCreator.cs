@@ -24,6 +24,8 @@ public class LevelCreator : MonoBehaviour
     public Material[] floorMaterials; // Array of materials for floors (7 elements)
     public Material[] wallMaterials;  // Array of materials for walls (7 elements)
     public Material[] enemyMaterials; // Array of materials for enemies (7 elements)
+    public GameObject[] chestPrefabs;
+    public GameObject[] trapsPrefabs;
 
     List<Vector3Int> possibleDoorVerticalPosition;
     List<Vector3Int> possibleDoorHorizontalPosition;
@@ -71,6 +73,8 @@ public class LevelCreator : MonoBehaviour
     {
         CreateMesh(listOfRooms[i].BottomLeftAreaCorner, listOfRooms[i].TopRightAreaCorner, floorMaterial);
         SpawnEnemiesInRoom(listOfRooms[i], materialIndex);  // Spawn enemies in each room
+        SpawnChestsInRoom(listOfRooms[i]);
+        SpawnTrapsInRoom(listOfRooms[i]);
     }
 
     CreateWalls(wallParent, wallMaterial);
@@ -205,6 +209,38 @@ private void SpawnPlayerInRoom(List<Node> rooms)
         return 0;
     }
 
+    private int GetChestCountForChestDice()
+    {
+        // Assuming your DiceData holds a list of dice with their names and values
+        foreach (var dice in diceData.winnersDiceCombination)
+        {
+            if (dice.diceName == "Chest Dice")
+            {
+                // Return the value from the Chest Dice (you can clamp it to a max value if needed)
+                return Mathf.Max(0, dice.diceValue); 
+            }
+        }
+
+        // Fallback to 0 chests if Chest Dice is not found
+        return 0;
+    }
+
+        private int GetTrapCountForTrapDice()
+    {
+        // Assuming your DiceData holds a list of dice with their names and values
+        foreach (var dice in diceData.winnersDiceCombination)
+        {
+            if (dice.diceName == "Trap Dice")
+            {
+                // Return the value from the Chest Dice (you can clamp it to a max value if needed)
+                return Mathf.Max(0, dice.diceValue); 
+            }
+        }
+
+        // Fallback to 0 chests if Chest Dice is not found
+        return 0;
+    }
+
     private void SpawnEnemiesInRoom(Node room, int materialIndex)
     {
         int enemyCount = GetEnemyCountForEnemyDice();  // Get number of enemies from Enemy Dice
@@ -231,6 +267,83 @@ private void SpawnPlayerInRoom(List<Node> rooms)
             }
             
         }
+    }
+
+    private void SpawnChestsInRoom(Node room) 
+    {
+            // Check if there's a chest to spawn based on the chest count
+            int chestCount = GetChestCountForChestDice();
+            if ((room.TopRightAreaCorner.x - room.BottomLeftAreaCorner.x > corridorWidth) && 
+            (room.TopRightAreaCorner.y - room.BottomLeftAreaCorner.y > corridorWidth))
+            {
+
+                if (chestCount <= 0) return; // Exit if no chests to spawn
+
+                // Calculate the center of the room
+                Vector2 roomCenter = new Vector2(
+                    (room.BottomLeftAreaCorner.x + room.TopRightAreaCorner.x) / 2,
+                    (room.BottomLeftAreaCorner.y + room.TopRightAreaCorner.y) / 2
+                );
+
+                // Attempt to find a valid spawn position near the center of the room
+                Vector3 chestSpawnPosition;
+                do
+                {
+                    // Randomly offset from the center to find a spawn position
+                    float offsetX = UnityEngine.Random.Range(-15f, 15f); // Adjust the range as needed
+                    float offsetY = UnityEngine.Random.Range(-15f, 15f); // Adjust the range as needed
+
+                    chestSpawnPosition = new Vector3(
+                        roomCenter.x + offsetX,
+                        0.5f, // Adjusted for height
+                        roomCenter.y + offsetY
+                    );
+                } while (!IsPositionInRoom(room, chestSpawnPosition)); // Ensure it's within the room
+
+                // Instantiate the chest
+                int chestIndex = UnityEngine.Random.Range(0, chestPrefabs.Length);
+                Instantiate(chestPrefabs[chestIndex], chestSpawnPosition, Quaternion.identity);
+            }
+
+    }
+
+    private void SpawnTrapsInRoom(Node room) 
+    {
+        // Check if there's a chest to spawn based on the chest count
+        int trapCount = GetTrapCountForTrapDice();
+
+        if ((room.TopRightAreaCorner.x - room.BottomLeftAreaCorner.x > corridorWidth) && 
+        (room.TopRightAreaCorner.y - room.BottomLeftAreaCorner.y > corridorWidth))
+        {
+            if (trapCount <= 0) return; // Exit if no chests to spawn
+
+        // Calculate the center of the room
+        Vector2 roomCenter = new Vector2(
+            (room.BottomLeftAreaCorner.x + room.TopRightAreaCorner.x) / 2,
+            (room.BottomLeftAreaCorner.y + room.TopRightAreaCorner.y) / 2
+        );
+
+        // Attempt to find a valid spawn position near the center of the room
+        Vector3 trapSpawnPosition;
+        do
+        {
+            // Randomly offset from the center to find a spawn position
+            float offsetX = UnityEngine.Random.Range(-0.5f, 0.5f); // Adjust the range as needed
+            float offsetY = UnityEngine.Random.Range(-0.5f, 0.5f); // Adjust the range as needed
+
+            trapSpawnPosition = new Vector3(
+                roomCenter.x + offsetX,
+                0.5f, // Adjusted for height
+                roomCenter.y + offsetY
+            );
+        } while (!IsPositionInRoom(room, trapSpawnPosition)); // Ensure it's within the room
+
+        // Instantiate the chest
+        int trapIndex = UnityEngine.Random.Range(0, trapsPrefabs.Length);
+        Instantiate(trapsPrefabs[trapIndex], trapSpawnPosition, Quaternion.identity);
+        }
+
+
     }
 
     private bool IsPositionInRoom(Node room, Vector3 position)
