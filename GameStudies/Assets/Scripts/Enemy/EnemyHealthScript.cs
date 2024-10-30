@@ -6,7 +6,7 @@ public class EnemyHealth : MonoBehaviour
     public float maxHealth = 100;
 
     [SerializeField]
-    private float currentHealth;
+    public float currentHealth;
 
     private EnemyElement enemyElement;
     private EnemyAudioManager audioManager;
@@ -54,24 +54,36 @@ public class EnemyHealth : MonoBehaviour
         return Mathf.RoundToInt(baseDamage * damageMultiplier);
     }
 
-    private float GetDamageMultiplier(ElementType enemyElementType, ElementType attackerElement)
+private float GetDamageMultiplier(ElementType enemyElementType, ElementType attackerElement)
+{
+    // Define the damage multiplier table following the specified logic
+    float[,] multiplierTable = new float[,]
     {
-        float[,] multiplierTable = new float[,]
-        {
-            { 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f },
-            { 1f, 2f, 0.8f, 1f, 1f, 1.3f },
-            { 0.8f, 1f, 1f, 1f, 2f, 1.3f },
-            { 1f, 1f, 1f, 0.8f, 2f, 1.3f },
-            { 1f, 1.3f, 1f, 1f, 0.8f, 1f },
-            { 1.3f, 0.8f, 1f, 2f, 1f, 1f },
-            { 0.8f, 1f, 1.3f, 1f, 2f, 1f }
-        };
+        // Attacker: Neutral, Death, Grass, Fire, Water, Light, Poison
+        // Enemy
+        { 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f }, // Neutral
+        { 1f, 1f, 2f, 1f, 2f, 0.5f, 0.5f },           // Death
+        { 1f, 0.5f, 1f, 0.5f, 2f, 1f, 2f },           // Grass
+        { 1f, 2f, 2f, 1f, 0.5f, 1f, 0.5f },           // Fire
+        { 1f, 1f, 0.5f, 2f, 1f, 0.5f, 2f },           // Water
+        { 1f, 2f, 0.5f, 1f, 2f, 1f, 0.5f },           // Light
+        { 1f, 0.5f, 1f, 0.5f, 2f, 1f, 1f }            // Poison
+    };
 
-        int enemyIndex = (int)enemyElementType;
-        int attackerIndex = (int)attackerElement;
+    // Convert the ElementType enums to integer indices for the table lookup
+    int enemyIndex = (int)enemyElementType;
+    int attackerIndex = (int)attackerElement;
 
-        return multiplierTable[enemyIndex, attackerIndex];
-    }
+    // Retrieve the multiplier value
+    float multiplier = multiplierTable[enemyIndex, attackerIndex];
+
+    // Log the interaction for visualization purposes
+    Debug.Log($"Attacker Element: {attackerElement}, Enemy Element: {enemyElementType}, Damage Multiplier: {multiplier}");
+
+    return multiplier;
+}
+
+
 
     private string GetEffectiveness(ElementType enemyElementType, ElementType attackerElement)
     {

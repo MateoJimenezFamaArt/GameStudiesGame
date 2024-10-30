@@ -145,5 +145,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   statToModify: 3
-  modificationAmount: -2
+  modificationAmount: -1
   statsManager: {fileID: 11400000, guid: f54978b60931b764c9549a803c133b16, type: 2}

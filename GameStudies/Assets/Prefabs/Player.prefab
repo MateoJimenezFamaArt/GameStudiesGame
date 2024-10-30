@@ -260,12 +260,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea0df4bf9dc1cfa49aaf938d321f4511, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxHealth: 100
+  playerStats: {fileID: 11400000, guid: f54978b60931b764c9549a803c133b16, type: 2}
   invulnerabilityDuration: 0.5
   playerRenderer: {fileID: 6895805442914744210}
   invulnerableColor: {r: 1, g: 0, b: 0, a: 1}
   mainCamera: {fileID: 420080332178216467}
   deathDelay: 2
+  currentHealth: 0
 --- !u!95 &7046187675808365415
 Animator:
   serializedVersion: 7
@@ -353,7 +354,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e6035740c80605c4da1271eaeb0e0466, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  objectToToggle: {fileID: 0}
 --- !u!1 &2055890524058174303
 GameObject:
   m_ObjectHideFlags: 0

@@ -5,7 +5,7 @@ using UnityEngine.SceneManagement;
 
 public class PlayerHealth : MonoBehaviour
 {
-    public float maxHealth = 100;
+    public PlayerStats playerStats; // Reference to the PlayerStats ScriptableObject
     public float invulnerabilityDuration = 0.5f; // Duration of invulnerability after taking damage
     public Renderer playerRenderer; // Reference to the player renderer for visual feedback (optional)
     public Color invulnerableColor = Color.red; // Color to show when invulnerable (optional)
@@ -25,7 +25,7 @@ public class PlayerHealth : MonoBehaviour
     {
         if (RunsManager.Instance.runsCompleted == 0)
         {
-            currentHealth = maxHealth;
+            currentHealth = playerStats.currentHealth;
         } else 
         {
             currentHealth = RunsManager.Instance.PreservedHealth;
