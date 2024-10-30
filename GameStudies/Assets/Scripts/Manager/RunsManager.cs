@@ -34,10 +34,10 @@ public class RunsManager : MonoBehaviour
     public void CompleteRun()
     {
         runsCompleted++;
-        health.currentHealth = PreservedHealth;
+        PreservedHealth = health.currentHealth;
         UpdateEnemyDifficulty();
         Debug.Log("El valor de la vida es "+ health.currentHealth);
-        Debug.Log("El valor guardado es :" + PreservedHealth);
+        Debug.Log("El valor guardado es :" + PreservedHealth);      
         // You can call other methods here to modify player stats or update UI
     }
 

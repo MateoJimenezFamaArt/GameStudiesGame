@@ -30,6 +30,7 @@ public class PlayerHealth : MonoBehaviour
         {
             currentHealth = RunsManager.Instance.PreservedHealth;
         }
+        //currentHealth = maxHealth;
 
         animator = GetComponent<Animator>();
 

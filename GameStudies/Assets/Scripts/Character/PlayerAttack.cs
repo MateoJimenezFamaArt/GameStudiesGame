@@ -12,12 +12,13 @@ public class PlayerAttack : MonoBehaviour
     // UI elements for cooldown timers
     public TextMeshProUGUI lightAttackCooldownText;
     public TextMeshProUGUI heavyAttackCooldownText;
-
     private Animator animator;
     private bool canLightAttack = true;
     private bool canHeavyAttack = true;
     private AttackType currentAttackType;
     private ElementType currentElementType;
+    private TextMeshProUGUI DamageDisplay;
+    private TextMeshProUGUI DamageDisplayComplement;
 
     // Enum for attack types
     private enum AttackType { Light, Heavy }
@@ -31,6 +32,8 @@ public class PlayerAttack : MonoBehaviour
         // Find and assign the UI TextMeshProUGUI components
         lightAttackCooldownText = GameObject.Find("LTimer").GetComponent<TextMeshProUGUI>();
         heavyAttackCooldownText = GameObject.Find("HTimer").GetComponent<TextMeshProUGUI>();
+        DamageDisplay = GameObject.Find("Damage").GetComponent<TextMeshProUGUI>();
+        DamageDisplay = GameObject.Find("Complement").GetComponent<TextMeshProUGUI>();
 
         // Initialize cooldown text
         UpdateCooldownText(lightAttackCooldownText, 0f);
@@ -105,6 +108,9 @@ public class PlayerAttack : MonoBehaviour
                     : playerStats.currentDamage * playerStats.currentHeavyAttackDamage;
 
                 enemyHealth.TakeDamage(damage, currentElementType);
+                DamageDisplay.text = "You have dealt: " + damage.ToString() + "Damage";
+                //DamageDisplayComplement.text = "The damage was "+ currentAttackType;
+
 
                 // Apply knockback based on attack type
                 Rigidbody enemyRb = other.gameObject.GetComponent<Rigidbody>();

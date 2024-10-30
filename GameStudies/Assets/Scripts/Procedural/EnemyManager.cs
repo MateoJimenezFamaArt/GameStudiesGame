@@ -60,7 +60,7 @@ public class EnemyManager : MonoBehaviour
             if (remainingEnemies <= 0 && totalEnemyCount > 0) // Check if all enemies are defeated
             {
                 Debug.Log("All enemies defeated! Player cleared the level.");
-                health.currentHealth = RunsManager.Instance.PreservedHealth;
+                RunsManager.Instance.PreservedHealth = health.currentHealth;
                 RunsManager.Instance.CompleteRun();
                 levelCleared = true; // Set the level cleared flag
                 StartCoroutine(ChangeSceneAfterDelay(5.0f)); // Wait 5 seconds and change scene
