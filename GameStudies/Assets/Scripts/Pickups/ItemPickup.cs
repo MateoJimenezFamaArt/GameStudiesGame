@@ -1,6 +1,7 @@
 using TMPro;
 using UnityEngine;
 using System.Collections;
+using Unity.VisualScripting;
 
 public class ItemPickup : MonoBehaviour
 {
@@ -9,7 +10,7 @@ public class ItemPickup : MonoBehaviour
     public PlayerStats statsManager;
 
     private TextMeshProUGUI PickupDisplay;
-    private float displayDuration = 1.3f; // Time in seconds to display the text
+    private float displayDuration = 2f; // Time in seconds to display the text
 
     private void Start()
     {
@@ -24,8 +25,20 @@ public class ItemPickup : MonoBehaviour
             if (statsManager != null)
             {
                 ApplyStatModification(statsManager);
+                MeshRenderer meshRenderer = gameObject.GetComponent<MeshRenderer>();
+                Collider collider = gameObject.GetComponent<Collider>();
+                if (meshRenderer != null)
+                {
+                    meshRenderer.enabled = false;
+                }
+
+                if (collider != null)
+                {
+                    collider.enabled = false;
+                }
+
             }
-            Destroy(gameObject); // Remove the item from the scene
+            
         }
     }
 
@@ -91,5 +104,6 @@ public class ItemPickup : MonoBehaviour
     {
         yield return new WaitForSeconds(displayDuration);
         PickupDisplay.text = "";
+        Destroy(gameObject); // Remove the item from the scene
     }
 }

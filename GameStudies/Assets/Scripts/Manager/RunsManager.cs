@@ -11,8 +11,10 @@ public class RunsManager : MonoBehaviour
     private PlayerHealth health; //reference to health
 
     public float PreservedHealth;
-    public int runsCompleted = 0; // Number of runs completed
 
+    public float moreEspeed,moreEdmg, moreEHealth,moreEatkspeed;
+
+    public int runsCompleted = 0; // Number of runs completed
     private void Awake()
     {
         // Implement singleton pattern
@@ -34,7 +36,7 @@ public class RunsManager : MonoBehaviour
     public void CompleteRun()
     {
         runsCompleted++;
-        PreservedHealth = health.currentHealth;
+        //PreservedHealth = health.currentHealth;
         UpdateEnemyDifficulty();
         Debug.Log("El valor de la vida es "+ health.currentHealth);
         Debug.Log("El valor guardado es :" + PreservedHealth);      
@@ -43,7 +45,10 @@ public class RunsManager : MonoBehaviour
 
     private void UpdateEnemyDifficulty()
     {
-        Debug.Log("Pa le subimos a los enemigos");
+        moreEdmg+= 10;
+        moreEHealth += 30;
+        moreEspeed+= 0.8f;
+        moreEatkspeed+= 0.01f;
     }
 
     private IEnumerator HoldUpForReference()

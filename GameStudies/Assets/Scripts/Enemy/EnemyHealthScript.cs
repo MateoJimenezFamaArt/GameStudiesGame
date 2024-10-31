@@ -12,6 +12,8 @@ public class EnemyHealth : MonoBehaviour
     private EnemyAudioManager audioManager;
     private EnemyStateMachine stateMachine;
 
+    public float finalDamage;
+
     public event System.Action OnDeath;
 
     private bool isDead = false; // Flag to check if the enemy is already dead
@@ -19,6 +21,10 @@ public class EnemyHealth : MonoBehaviour
     private void Start()
     {
         currentHealth = maxHealth;
+        if (RunsManager.Instance.runsCompleted > 0)
+        {
+            currentHealth = maxHealth + RunsManager.Instance.moreEHealth;
+        } else {maxHealth = 100;}
         enemyElement = GetComponent<EnemyElement>();
         audioManager = GetComponent<EnemyAudioManager>();
         stateMachine = GetComponent<EnemyStateMachine>();
@@ -30,7 +36,7 @@ public class EnemyHealth : MonoBehaviour
         if (isDead) return;
 
         audioManager.PlayRandomHitSound();
-        float finalDamage = CalculateDamage(baseDamage, attackerElement);
+        finalDamage = CalculateDamage(baseDamage, attackerElement);
         currentHealth -= finalDamage;
 
         /*Debug.Log($"Enemy took damage: {finalDamage} from {attackerElement} element.");

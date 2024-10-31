@@ -55,8 +55,11 @@ public class PlayerHealth : MonoBehaviour
 
         currentHealth -= damage;
         animator.SetTrigger("Hurt");
+        RunsManager.Instance.PreservedHealth = currentHealth;
 
         currentlife.text = "Player Health: " + currentHealth.ToString();
+
+        Debug.Log ("La vida guardada en el manager es de : " + RunsManager.Instance.PreservedHealth);
 
         // Trigger invulnerability and visual feedback
         StartCoroutine(InvulnerabilityRoutine());
@@ -90,6 +93,7 @@ public class PlayerHealth : MonoBehaviour
     private void Die()
     {
         RunsManager.Instance.runsCompleted = 0;
+        playerStats.ResetStats();
         Debug.Log("Player died!");
         SceneManager.LoadScene("You Are Dead");
     }

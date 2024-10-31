@@ -9,16 +9,16 @@ public class PlayerAttack : MonoBehaviour
     public GameObject rightHand; // Right hand object
     public Material[] elementMaterials; // Array of materials for elements
 
-    // UI elements for cooldown timers
+    // UI elements for cooldown timers and element display
     public TextMeshProUGUI lightAttackCooldownText;
     public TextMeshProUGUI heavyAttackCooldownText;
+    private TextMeshProUGUI currentElementText;
     private Animator animator;
     private bool canLightAttack = true;
     private bool canHeavyAttack = true;
     private AttackType currentAttackType;
     private ElementType currentElementType;
     private TextMeshProUGUI DamageDisplay;
-    private TextMeshProUGUI DamageDisplayComplement;
 
     // Enum for attack types
     private enum AttackType { Light, Heavy }
@@ -33,11 +33,16 @@ public class PlayerAttack : MonoBehaviour
         lightAttackCooldownText = GameObject.Find("LTimer").GetComponent<TextMeshProUGUI>();
         heavyAttackCooldownText = GameObject.Find("HTimer").GetComponent<TextMeshProUGUI>();
         DamageDisplay = GameObject.Find("Damage").GetComponent<TextMeshProUGUI>();
-        DamageDisplay = GameObject.Find("Complement").GetComponent<TextMeshProUGUI>();
+
+        // Find and assign the CurrentElement UI TextMeshProUGUI
+        currentElementText = GameObject.Find("CurrentElement").GetComponent<TextMeshProUGUI>();
 
         // Initialize cooldown text
         UpdateCooldownText(lightAttackCooldownText, 0f);
         UpdateCooldownText(heavyAttackCooldownText, 0f);
+        
+        // Update current element text
+        UpdateCurrentElementText();
     }
 
     private void Update()
@@ -96,28 +101,24 @@ public class PlayerAttack : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        // Check if the collided object is an enemy
         if (other.gameObject.layer == LayerMask.NameToLayer("Enemy"))
         {
             EnemyHealth enemyHealth = other.gameObject.GetComponent<EnemyHealth>();
             if (enemyHealth != null)
             {
-                // Apply damage with elemental effect
                 float damage = currentAttackType == AttackType.Light 
                     ? playerStats.currentDamage * playerStats.currentLightAttackDamage 
                     : playerStats.currentDamage * playerStats.currentHeavyAttackDamage;
 
                 enemyHealth.TakeDamage(damage, currentElementType);
-                DamageDisplay.text = "You have dealt: " + damage.ToString() + "Damage";
-                //DamageDisplayComplement.text = "The damage was "+ currentAttackType;
+                DamageDisplay.text = "You have dealt: " + enemyHealth.finalDamage.ToString() + " Damage";
+                StartCoroutine(Blank());
 
-
-                // Apply knockback based on attack type
                 Rigidbody enemyRb = other.gameObject.GetComponent<Rigidbody>();
                 if (enemyRb != null)
                 {
                     Vector3 knockbackDir = other.transform.position - transform.position;
-                    knockbackDir.y = 0; // Ensure horizontal knockback
+                    knockbackDir.y = 0;
                     float knockbackForce = currentAttackType == AttackType.Light ? 5f : 10f;
                     enemyRb.AddForce(knockbackDir.normalized * knockbackForce, ForceMode.Impulse);
                 }
@@ -130,12 +131,28 @@ public class PlayerAttack : MonoBehaviour
         Material elementMaterial = elementMaterials[(int)currentElementType];
         Renderer rightHandRenderer = rightHand.GetComponent<Renderer>();
         rightHandRenderer.material = elementMaterial;
+
+        // Update the UI text to display the current element
+        UpdateCurrentElementText();
     }
 
-    // Function to cycle through elements for debugging
+    private void UpdateCurrentElementText()
+    {
+        if (currentElementText != null)
+        {
+            currentElementText.text = "Current Element: " + currentElementType.ToString();
+        }
+    }
+
     private void CycleElement()
     {
         currentElementType = (ElementType)(((int)currentElementType + 1) % elementMaterials.Length); // Loop through elements
         UpdateElementMaterial();
+    }
+
+    private IEnumerator Blank()
+    {
+        yield return new WaitForSeconds(2.3f);
+        DamageDisplay.text = "";
     }
 }

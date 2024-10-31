@@ -4,7 +4,7 @@ using UnityEngine;
 public class EnemyAttack : MonoBehaviour
 {
     public GameObject attackHitbox; // Hitbox for the attack
-    public int attackDamage = 10;
+    public float attackDamage = 10;
 
     private Collider attackCollider;
 
@@ -21,6 +21,11 @@ public class EnemyAttack : MonoBehaviour
         {
             Debug.LogError("No Collider found on the attack hitbox!");
         }
+
+        if (RunsManager.Instance.runsCompleted > 0)
+        {
+            attackDamage += RunsManager.Instance.moreEdmg;
+        } else {attackDamage = 10;}
 
     }
 

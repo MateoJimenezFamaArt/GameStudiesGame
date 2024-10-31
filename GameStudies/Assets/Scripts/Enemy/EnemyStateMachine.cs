@@ -10,7 +10,7 @@ public class EnemyStateMachine : MonoBehaviour
     public float idleRadius = 10f;
     public float chaseSpeed = 4f;
     public float attackRange = 2f;
-    public float recoveryTime = 2f;
+    public float recoveryTime = 1f;
 
     public float DeathAnimationTime = 0f;
 
@@ -25,7 +25,22 @@ public class EnemyStateMachine : MonoBehaviour
     public event Action OnIdle;   // Event for idle
 
     private void Start()
-    {
+    {   
+        if (RunsManager.Instance.runsCompleted > 0)
+        {
+            chaseSpeed = 6f + RunsManager.Instance.moreEspeed;
+            recoveryTime = 1f - RunsManager.Instance.moreEatkspeed;
+            /*if (recoveryTime >= 0.0001f)
+            {
+                recoveryTime = 0.0001f;
+            }*/
+        }
+        else 
+        {
+            chaseSpeed = 6f;
+            recoveryTime = 1f;
+        }
+        
         player = GameObject.FindGameObjectWithTag("Player").transform;
         rb = GetComponent<Rigidbody>();
         StartCoroutine(StateMachine());

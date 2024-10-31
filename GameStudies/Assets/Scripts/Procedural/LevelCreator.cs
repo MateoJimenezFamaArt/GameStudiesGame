@@ -82,25 +82,24 @@ public class LevelCreator : MonoBehaviour
 
 private void SpawnPlayerInRoom(List<Node> rooms)
 {
-    // Randomly select a room from the list
     Node selectedRoom = rooms[UnityEngine.Random.Range(0, rooms.Count)];
 
-    // Calculate a spawn position within the selected room
-    Vector3 playerSpawnPosition = new Vector3(
-        UnityEngine.Random.Range(selectedRoom.BottomLeftAreaCorner.x, selectedRoom.TopRightAreaCorner.x), 
-        1.0f,  // Adjusted spawn position to be above the ground
-        UnityEngine.Random.Range(selectedRoom.BottomLeftAreaCorner.y, selectedRoom.TopRightAreaCorner.y)
-    );
+    Vector3 playerSpawnPosition;
+    bool isPositionValid;
 
-    // Ensure the spawn position is within the room bounds
-    if (IsPositionInRoom(selectedRoom, playerSpawnPosition))
+    do
     {
-        Instantiate(playerPrefab, playerSpawnPosition, Quaternion.identity);
-    }
-    else
-    {
-        Debug.LogError("Spawn position is not within the room bounds!");
-    }
+        playerSpawnPosition = new Vector3(
+            UnityEngine.Random.Range(selectedRoom.BottomLeftAreaCorner.x, selectedRoom.TopRightAreaCorner.x),
+            1.0f,
+            UnityEngine.Random.Range(selectedRoom.BottomLeftAreaCorner.y, selectedRoom.TopRightAreaCorner.y)
+        );
+
+        isPositionValid = !Physics.CheckSphere(playerSpawnPosition, 2f, LayerMask.GetMask("Wall"));
+
+    } while (!IsPositionInRoom(selectedRoom, playerSpawnPosition) || !isPositionValid);
+
+    Instantiate(playerPrefab, playerSpawnPosition, Quaternion.identity);
 }
 
     private void CreateWalls(GameObject wallParent, Material wallMaterial)
@@ -241,33 +240,35 @@ private void SpawnPlayerInRoom(List<Node> rooms)
         return 0;
     }
 
-    private void SpawnEnemiesInRoom(Node room, int materialIndex)
-    {
-        int enemyCount = GetEnemyCountForEnemyDice();  // Get number of enemies from Enemy Dice
+private void SpawnEnemiesInRoom(Node room, int materialIndex)
+{
+    int enemyCount = GetEnemyCountForEnemyDice();
 
-        // Check if the room is a full-sized room (larger than corridor width)
-        if ((room.TopRightAreaCorner.x - room.BottomLeftAreaCorner.x > corridorWidth) && 
-            (room.TopRightAreaCorner.y - room.BottomLeftAreaCorner.y > corridorWidth))
+    if ((room.TopRightAreaCorner.x - room.BottomLeftAreaCorner.x > corridorWidth) &&
+        (room.TopRightAreaCorner.y - room.BottomLeftAreaCorner.y > corridorWidth))
+    {
+        for (int i = 0; i < enemyCount; i++)
         {
-            for (int i = 0; i < enemyCount; i++)
+            Vector3 enemySpawnPosition;
+            bool isPositionValid;
+
+            do
             {
-                // Spawn enemies in the room above the ground
-                Vector3 enemySpawnPosition = new Vector3(
-                    UnityEngine.Random.Range(room.BottomLeftAreaCorner.x, room.TopRightAreaCorner.x), 
-                    1.0f,  // Adjusted spawn position to be above the ground
+                enemySpawnPosition = new Vector3(
+                    UnityEngine.Random.Range(room.BottomLeftAreaCorner.x, room.TopRightAreaCorner.x),
+                    1.0f,
                     UnityEngine.Random.Range(room.BottomLeftAreaCorner.y, room.TopRightAreaCorner.y)
                 );
 
-                // Ensure the spawn position is within the room bounds
-                if (IsPositionInRoom(room, enemySpawnPosition))
-                {
-                    GameObject enemy = Instantiate(enemyPrefab, enemySpawnPosition, Quaternion.identity);
-                    enemy.GetComponent<MeshRenderer>().material = enemyMaterials[materialIndex];  // Set enemy material
-                }
-            }
-            
+                isPositionValid = !Physics.CheckSphere(enemySpawnPosition, 2f, LayerMask.GetMask("Wall"));
+
+            } while (!IsPositionInRoom(room, enemySpawnPosition) || !isPositionValid);
+
+            GameObject enemy = Instantiate(enemyPrefab, enemySpawnPosition, Quaternion.identity);
+            enemy.GetComponent<MeshRenderer>().material = enemyMaterials[materialIndex];
         }
     }
+}
 
     private void SpawnChestsInRoom(Node room) 
     {

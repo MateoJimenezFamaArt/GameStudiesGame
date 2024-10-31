@@ -107,7 +107,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29b3af5821d670142b7ecf0bb8c9c0c5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  mouseSensitivity: 100
+  mouseSensitivity: 200
   playerBody: {fileID: 9076576745545963251}
   crosshair: {fileID: 4725590976833863635, guid: 9480f4dfb42bc1d4f8eb818c67c06f2d, type: 3}
 --- !u!1 &363815205597976744
@@ -200,7 +200,7 @@ Rigidbody:
   m_IsKinematic: 0
   m_Interpolate: 0
   m_Constraints: 112
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &7550616130047074233
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -217,7 +217,7 @@ MonoBehaviour:
   jumpForce: 5
   diveForce: 10
   gravityMultiplier: 1
-  groundCheckDistance: 2
+  groundCheckDistance: 1
   groundLayer:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -239,13 +239,13 @@ MonoBehaviour:
   playerStats: {fileID: 11400000, guid: f54978b60931b764c9549a803c133b16, type: 2}
   rightHand: {fileID: 2055890524058174303}
   elementMaterials:
-  - {fileID: 2100000, guid: 907d397e1fa8c164db048f76fd257f8f, type: 2}
-  - {fileID: 2100000, guid: 311fe80c16a635741960d1e6a02eb869, type: 2}
-  - {fileID: 2100000, guid: 5e1fb2c9044fe384c90ae11a14db4fe6, type: 2}
-  - {fileID: 2100000, guid: b8a548ef3cd985c4385714ba6d151a1c, type: 2}
-  - {fileID: 2100000, guid: 1842aed8eed33a54e81cc5f581d40837, type: 2}
-  - {fileID: 2100000, guid: af11affd15b6f224699c9fb6c0e4d64d, type: 2}
-  - {fileID: 2100000, guid: e36ecc612e8b0be4c808db05319411b8, type: 2}
+  - {fileID: 2100000, guid: e1e2254cf8acdf84f87bd8389fc64205, type: 2}
+  - {fileID: 2100000, guid: 77dd1006e686bae4c84307fa0b9da254, type: 2}
+  - {fileID: 2100000, guid: ff69ed552e964f64589a93820b54a09d, type: 2}
+  - {fileID: 2100000, guid: d223ed692b5d82c49b74b0b225d92910, type: 2}
+  - {fileID: 2100000, guid: 8e5394b66e0f0a144879c835babf8eb3, type: 2}
+  - {fileID: 2100000, guid: 134bb3b7f0080fb4a81d010ec817bba9, type: 2}
+  - {fileID: 2100000, guid: 3a3dd130c57675c46878ced7c626afdb, type: 2}
   lightAttackCooldownText: {fileID: 0}
   heavyAttackCooldownText: {fileID: 0}
 --- !u!114 &8536763331448869860
